@@ -50,7 +50,7 @@ resource "github_branch_protection_v3" "main" {
   }
 
   dynamic "required_status_checks" {
-    for_each = length(var.status_checks) > 0 ? toset(var.status_checks) : []
+    for_each = length(var.status_checks) > 0 ? toset([var.status_checks]) : []
 
     content {
       contexts = required_status_checks.value
