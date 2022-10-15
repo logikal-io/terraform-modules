@@ -4,4 +4,4 @@ on: pull_request
 jobs:
   run-terraform-tests:
     name: Run Terraform tests
-    uses: logikal-io/github-workflows/.github/workflows/run-terraform-tests.yml@v1.1.0-dev2
+    uses: logikal-io/github-workflows/.github/workflows/run-terraform-tests.yml@v1.1.0-dev3
