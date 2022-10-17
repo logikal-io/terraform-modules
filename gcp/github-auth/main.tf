@@ -9,9 +9,15 @@ terraform {
 }
 
 # Identity pool provider
+resource "google_project_service" "iam" {
+  service = "iam.googleapis.com"
+}
+
 resource "google_iam_workload_identity_pool" "ci_cd" {
   workload_identity_pool_id = "ci-cd"
   display_name = "CI/CD tasks"
+
+  depends_on = [google_project_service.iam]
 }
 
 resource "google_iam_workload_identity_pool_provider" "github" {
@@ -34,6 +40,8 @@ resource "google_service_account" "github_actions" {
   for_each = var.service_account_accesses
 
   account_id = each.key
+
+  depends_on = [google_project_service.iam]
 }
 
 resource "google_service_account_iam_binding" "ci_cd" {
