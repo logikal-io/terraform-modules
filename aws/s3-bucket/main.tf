@@ -24,6 +24,23 @@ resource "aws_s3_bucket_server_side_encryption_configuration" "aws_managed" {
   }
 }
 
+resource "aws_s3_bucket_lifecycle_configuration" "this" {
+  count = var.expire_days != null ? 1 : 0
+
+  bucket = aws_s3_bucket.this.id
+
+  rule {
+    id = "expire"
+    abort_incomplete_multipart_upload {
+      days_after_initiation = var.expire_days
+    }
+    expiration {
+      days = var.expire_days
+    }
+    status = "Enabled"
+  }
+}
+
 resource "aws_s3_bucket_acl" "this" {
   bucket = aws_s3_bucket.this.id
   acl = var.public ? "public-read" : "private"
