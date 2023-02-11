@@ -194,6 +194,7 @@ resource "google_bigquery_dataset" "website_logs" {
   dataset_id = replace("${local.website_id}-logs", "-", "_")
   location = var.bigquery_location
   delete_contents_on_destroy = false
+  max_time_travel_hours = 48
 
   depends_on = [google_project_service.bigquery]
 }
