@@ -3,7 +3,7 @@ terraform {
   required_providers {
     google = {
       source = "hashicorp/google"
-      version = "~> 4.36"
+      version = "~> 4.52"
     }
   }
 }
@@ -50,6 +50,7 @@ resource "google_compute_backend_bucket" "website" {
   bucket_name = google_storage_bucket.website.name
   enable_cdn = true
   edge_security_policy = google_compute_security_policy.cloud_armor_edge.id
+  compression_mode = "AUTOMATIC"
 
   cdn_policy {
     cache_mode = (var.force_cache_all ? "FORCE_CACHE_ALL" : "CACHE_ALL_STATIC")
