@@ -66,3 +66,8 @@ resource "github_branch_protection" "all" {
   require_signed_commits = true
   allows_deletions = true
 }
+
+resource "github_repository_tag_protection" "all" {
+  repository = github_repository.this.name
+  pattern = "*"
+}

@@ -54,3 +54,11 @@ resource "aws_s3_bucket_public_access_block" "this" {
   ignore_public_acls = !var.public
   restrict_public_buckets = !var.public
 }
+
+resource "aws_s3_bucket_versioning" "this" {
+  bucket = aws_s3_bucket.this.id
+  versioning_configuration {
+    status = var.versioning ? "Enabled" : "Disabled"
+    mfa_delete = var.mfa_delete ? "Enabled" : "Disabled"
+  }
+}
