@@ -3,7 +3,7 @@ terraform {
   required_providers {
     github = {
       source = "integrations/github"
-      version = "~> 5.0"
+      version = "~> 5.1"
     }
   }
 }
@@ -53,6 +53,8 @@ resource "github_branch_protection_v3" "main" {
     for_each = length(var.status_checks) > 0 ? toset([var.status_checks]) : []
 
     content {
+      # Note: "contexts" is deprecated but "checks" isn't working properly either
+      # (see https://github.com/integrations/terraform-provider-github/issues/1657)
       contexts = required_status_checks.value
       strict = true
     }
