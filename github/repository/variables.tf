@@ -24,14 +24,14 @@ variable "homepage" {
   default = ""
 }
 
-variable "visibility" {
-  description = "The visibility of the repository (either 'private' or 'public')"
-  type = string
-  default = "private"
-}
-
 variable "status_checks" {
   description = "The name of the status checks that must pass before merging"
   type = list(string)
   default = []
+}
+
+variable "visibility" {
+  description = "The visibility of the repository (either 'private' or 'public')"
+  type = string
+  default = "private"
 }

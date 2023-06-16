@@ -1,5 +1,5 @@
 output "name" {
-  value = aws_s3_bucket.this.bucket
+  value = var.versioning ? aws_s3_bucket_versioning.this.bucket : aws_s3_bucket.this.bucket
   description = "The name of the AWS S3 bucket"
 }
 
