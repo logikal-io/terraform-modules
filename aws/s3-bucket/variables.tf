@@ -25,9 +25,3 @@ variable "versioning" {
   type = bool
   default = false
 }
-
-variable "mfa_delete" {
-  description = "Whether MFA delete is enabled in the bucket versioning configuration"
-  type = bool
-  default = false
-}
