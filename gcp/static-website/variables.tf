@@ -1,3 +1,8 @@
+variable "project_id" {
+  description = "The project ID to use"
+  type = string
+}
+
 variable "domain" {
   description = "The static website domain"
   type = string
@@ -30,4 +35,10 @@ variable "redirects" {
   description = "A list of 301 redirects to issue"
   type = list(object({ paths = list(string), redirect = string }))
   default = []
+}
+
+variable "uploader_service_account_email" {
+  description = "The email address of the website uploader service account"
+  type = string
+  default = ""
 }

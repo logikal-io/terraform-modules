@@ -222,3 +222,44 @@ resource "google_bigquery_dataset_iam_binding" "log_writer" {
   role = "roles/bigquery.dataEditor"
   members = [google_logging_project_sink.website_logs.writer_identity]
 }
+
+# Uploader service account permissions
+resource "google_storage_bucket_iam_member" "website_uploader_object_admin" {
+  count = var.uploader_service_account_email != "" ? 1 : 0
+
+  bucket = google_storage_bucket.website.name
+  role = "roles/storage.objectAdmin"
+  member = "serviceAccount:${var.uploader_service_account_email}"
+}
+
+resource "google_project_iam_custom_role" "bucket_metadata_reader" {
+  count = var.uploader_service_account_email != "" ? 1 : 0
+
+  role_id = "BucketMetadataReader"
+  title = "Bucket Metadata Reader"
+  permissions = ["storage.buckets.get"]
+}
+
+resource "google_storage_bucket_iam_member" "website_uploader_bucket_metadata_reader" {
+  count = var.uploader_service_account_email != "" ? 1 : 0
+
+  bucket = google_storage_bucket.website.name
+  role = one(google_project_iam_custom_role.bucket_metadata_reader[*].id)
+  member = "serviceAccount:${var.uploader_service_account_email}"
+}
+
+resource "google_project_iam_custom_role" "cdn_invalidator" {
+  count = var.uploader_service_account_email != "" ? 1 : 0
+
+  role_id = "CDNInvalidator"
+  title = "CDN Invalidator"
+  permissions = ["compute.urlMaps.get", "compute.urlMaps.invalidateCache"]
+}
+
+resource "google_project_iam_member" "website_cdn_invalidator" {
+  count = var.uploader_service_account_email != "" ? 1 : 0
+
+  project = var.project_id
+  role = one(google_project_iam_custom_role.cdn_invalidator[*].id)
+  member = "serviceAccount:${var.uploader_service_account_email}"
+}
