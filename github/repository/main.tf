@@ -23,9 +23,10 @@ resource "github_repository" "this" {
   merge_commit_message = "PR_TITLE"
   delete_branch_on_merge = true
   auto_init = true
+  archived = var.archived
   archive_on_destroy = true
   topics = var.topics
-  vulnerability_alerts = true
+  vulnerability_alerts = !var.archived
 }
 
 resource "github_branch_default" "main" {

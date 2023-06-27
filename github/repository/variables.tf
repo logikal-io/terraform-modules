@@ -35,3 +35,9 @@ variable "visibility" {
   type = string
   default = "private"
 }
+
+variable "archived" {
+  description = "Whether the repository is archived"
+  type = bool
+  default = false
+}
