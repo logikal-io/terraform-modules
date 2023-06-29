@@ -13,7 +13,7 @@ terraform {
 
   after_hook "tflint" {
     commands = ["validate"]
-    execute = ["tflint", "--color", "."]
+    execute = ["tflint", "--color"]
   }
 }
 
@@ -30,12 +30,12 @@ generate "tflint_configuration" {
     }
     plugin "google" {
       enabled = true
-      version = "0.20.0"
+      version = "0.24.0"
       source = "github.com/terraform-linters/tflint-ruleset-google"
     }
     plugin "aws" {
       enabled = true
-      version = "0.19.0"
+      version = "0.23.1"
       source = "github.com/terraform-linters/tflint-ruleset-aws"
     }
   EOT
