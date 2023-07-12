@@ -186,6 +186,10 @@ resource "google_compute_global_forwarding_rule" "https_redirect" {
 }
 
 # Logs
+resource "google_project_service" "logging" {
+  service = "logging.googleapis.com"
+}
+
 resource "google_project_service" "bigquery" {
   service = "bigquery.googleapis.com"
 }
@@ -215,6 +219,8 @@ resource "google_logging_project_sink" "website_logs" {
   bigquery_options {
     use_partitioned_tables = true
   }
+
+  depends_on = [google_project_service.logging]
 }
 
 resource "google_bigquery_dataset_iam_binding" "log_writer" {
