@@ -238,7 +238,7 @@ resource "google_project_iam_custom_role" "bucket_metadata_reader" {
 
 resource "google_storage_bucket_iam_member" "website_uploader_bucket_metadata_reader" {
   bucket = google_storage_bucket.website.name
-  role = one(google_project_iam_custom_role.bucket_metadata_reader[*].id)
+  role = google_project_iam_custom_role.bucket_metadata_reader.id
   member = "serviceAccount:${var.uploader_service_account_email}"
 }
 
@@ -250,6 +250,6 @@ resource "google_project_iam_custom_role" "cdn_invalidator" {
 
 resource "google_project_iam_member" "website_cdn_invalidator" {
   project = var.project_id
-  role = one(google_project_iam_custom_role.cdn_invalidator[*].id)
+  role = google_project_iam_custom_role.cdn_invalidator.id
   member = "serviceAccount:${var.uploader_service_account_email}"
 }
