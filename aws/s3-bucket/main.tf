@@ -12,6 +12,8 @@ data "aws_region" "current" {}
 
 resource "aws_s3_bucket" "this" {
   bucket = "${var.name}-${data.aws_region.current.name}-${var.suffix}"
+
+  tags = var.tags
 }
 
 resource "aws_s3_bucket_server_side_encryption_configuration" "aws_managed" {
