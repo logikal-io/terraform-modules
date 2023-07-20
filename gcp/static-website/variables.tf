@@ -38,6 +38,6 @@ variable "force_cache_all" {
 
 variable "redirects" {
   description = "A list of 301 redirects to issue"
-  type = list(object({ paths = list(string), redirect = string }))
+  type = list(object({paths = list(string), redirect = string}))
   default = []
 }

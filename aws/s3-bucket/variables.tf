@@ -25,3 +25,9 @@ variable "versioning" {
   type = bool
   default = false
 }
+
+variable "tags" {
+  description = "The tags to use for the bucket"
+  type = map(string)
+  default = null
+}
