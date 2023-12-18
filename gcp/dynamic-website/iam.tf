@@ -50,6 +50,13 @@ resource "google_artifact_registry_repository_iam_member" "website_publisher" {
 }
 
 # Service update access
+resource "google_cloud_run_v2_service_iam_member" "service_view_access_for_publisher" {
+  name = google_cloud_run_v2_service.website.name
+  location = google_cloud_run_v2_service.website.location
+  role = "roles/run.viewer"
+  member = "serviceAccount:${var.publisher_service_account_email}"
+}
+
 resource "google_service_account_iam_member" "website_service_user_access_for_publisher" {
   service_account_id = google_service_account.website_service.name
   role = "roles/iam.serviceAccountUser"
