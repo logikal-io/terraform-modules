@@ -82,7 +82,7 @@ resource "google_project_iam_custom_role" "job_updater" {
   role_id = "CloudRunJobUpdater"
   title = "Cloud Run Job Updater"
   description = "Can update a Cloud Run job."
-  permissions = ["run.jobs.update"]
+  permissions = ["run.jobs.update", "run.jobs.runWithOverrides"]
 }
 
 resource "google_cloud_run_v2_job_iam_member" "job_update_access_for_publisher" {
