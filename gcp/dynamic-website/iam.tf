@@ -77,7 +77,7 @@ resource "google_cloud_run_v2_service_iam_member" "service_update_access_for_pub
   member = "serviceAccount:${var.publisher_service_account_email}"
 }
 
-# Migration job update access
+# Command job update access
 resource "google_project_iam_custom_role" "job_updater" {
   role_id = "CloudRunJobUpdater"
   title = "Cloud Run Job Updater"
@@ -86,18 +86,18 @@ resource "google_project_iam_custom_role" "job_updater" {
 }
 
 resource "google_cloud_run_v2_job_iam_member" "job_update_access_for_publisher" {
-  name = google_cloud_run_v2_job.website_migration.name
-  location = google_cloud_run_v2_job.website_migration.location
+  name = google_cloud_run_v2_job.website_command.name
+  location = google_cloud_run_v2_job.website_command.location
   role = google_project_iam_custom_role.job_updater.id
   member = "serviceAccount:${var.publisher_service_account_email}"
 }
 
-# Migration job run access
+# Command job run access
 resource "google_cloud_run_v2_job_iam_member" "job_access_for_publisher" {
   for_each = toset(["roles/run.invoker", "roles/run.viewer"])
 
-  name = google_cloud_run_v2_job.website_migration.name
-  location = google_cloud_run_v2_job.website_migration.location
+  name = google_cloud_run_v2_job.website_command.name
+  location = google_cloud_run_v2_job.website_command.location
   role = each.key
   member = "serviceAccount:${var.publisher_service_account_email}"
 }

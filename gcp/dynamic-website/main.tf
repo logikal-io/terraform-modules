@@ -161,9 +161,9 @@ resource "google_cloud_run_v2_service" "website" {
   }
 }
 
-# Migration job
-resource "google_cloud_run_v2_job" "website_migration" {
-  name = "${var.name}-website-migrate"
+# Command job
+resource "google_cloud_run_v2_job" "website_command" {
+  name = "${var.name}-website-command"
   location = google_artifact_registry_repository.website.location
   project = var.project_id
 
@@ -197,7 +197,8 @@ resource "google_cloud_run_v2_job" "website_migration" {
             memory = var.server_memory
           }
         }
-        args = ["orb", "app", "--command", "manage migrate"]
+        command = ["orb", "app", "--command"]
+        args = ["manage"]
       }
       volumes {
         name = "cloudsql"
