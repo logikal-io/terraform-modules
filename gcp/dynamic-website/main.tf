@@ -157,7 +157,11 @@ resource "google_cloud_run_v2_service" "website" {
     google_project_iam_member.cloud_sql_access_for_website_service_user,
   ]
   lifecycle {
-    ignore_changes = [template[0].containers[0].image]
+    ignore_changes = [
+      client,
+      client_version,
+      template[0].containers[0].image,
+    ]
   }
 }
 
@@ -211,7 +215,11 @@ resource "google_cloud_run_v2_job" "website_command" {
 
   depends_on = [google_project_service.cloud_run]
   lifecycle {
-    ignore_changes = [template[0].template[0].containers[0].image]
+    ignore_changes = [
+      client,
+      client_version,
+      template[0].template[0].containers[0].image,
+    ]
   }
 }
 
