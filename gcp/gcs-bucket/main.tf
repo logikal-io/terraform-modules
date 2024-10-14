@@ -13,7 +13,7 @@ resource "google_storage_bucket" "this" {
   location = var.location
   storage_class = var.storage_class
 
-  uniform_bucket_level_access = var.public
+  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_iam_member" "public" {
