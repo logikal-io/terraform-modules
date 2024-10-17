@@ -13,13 +13,13 @@ data "google_billing_account" "this" {
 }
 
 locals {
-  project_id = lower(replace(var.name, "/[ .]/", "-"))
+  name_id = lower(replace(var.name, "/[ .]/", "-"))
   organization_id = replace(var.organization, ".", "-")
 }
 
 resource "google_project" "this" {
   name = var.name
-  project_id = "${local.project_id}-${local.organization_id}"
+  project_id = join("-", compact([local.name_id, var.namespace, local.organization_id]))
   folder_id = var.folder_id
   billing_account = data.google_billing_account.this.id
 }

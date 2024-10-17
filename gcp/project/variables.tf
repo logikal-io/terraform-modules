@@ -14,6 +14,12 @@ variable "name" {
   type = string
 }
 
+variable "namespace" {
+  description = "The namespace of the project"
+  type = string
+  default = null
+}
+
 variable "folder_id" {
   description = "The ID of the folder where the project is located"
   type = string
