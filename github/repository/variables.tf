@@ -30,6 +30,12 @@ variable "status_checks" {
   default = []
 }
 
+variable "enforce_checks_for_admins" {
+  description = "Whether to enforce checks for repository administrators too"
+  type = bool
+  default = true
+}
+
 variable "visibility" {
   description = "The visibility of the repository (either 'private' or 'public')"
   type = string
