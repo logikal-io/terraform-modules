@@ -61,6 +61,9 @@ resource "github_branch_protection" "main" {
       strict = true
     }
   }
+
+  allows_deletions = false
+  allows_force_pushes = false
 }
 
 resource "github_branch_protection" "all" {
