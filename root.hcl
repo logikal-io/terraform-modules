@@ -26,18 +26,18 @@ generate "tflint_configuration" {
     }
     plugin "terraform" {
       enabled = true
-      version = "0.5.0"
+      version = "0.10.0"
       source = "github.com/terraform-linters/tflint-ruleset-terraform"
       preset = "all"
     }
     plugin "google" {
       enabled = true
-      version = "0.24.0"
+      version = "0.30.0"
       source = "github.com/terraform-linters/tflint-ruleset-google"
     }
     plugin "aws" {
       enabled = true
-      version = "0.23.1"
+      version = "0.37.0"
       source = "github.com/terraform-linters/tflint-ruleset-aws"
     }
   EOT

@@ -7,11 +7,7 @@ terraform {
     }
     google = {
       source = "hashicorp/google"
-      version = "~> 5.9"
-    }
-    google-beta = {
-      source = "hashicorp/google-beta"
-      version = "~> 5.9"
+      version = "~> 6.19"
     }
   }
 }
@@ -45,8 +41,6 @@ resource "google_project_service" "artifact_registry" {
 }
 
 resource "google_artifact_registry_repository" "website" {
-  provider = google-beta  # needed for cleanup_policies
-
   location = var.region
   repository_id = "website"
   format = "DOCKER"

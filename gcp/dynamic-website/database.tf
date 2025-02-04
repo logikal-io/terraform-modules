@@ -10,12 +10,17 @@ resource "google_sql_database_instance" "website" {
     tier = var.database_tier
     edition = "ENTERPRISE"
     activation_policy = "ALWAYS"
-    availability_type = "REGIONAL"
+    availability_type = var.database_availability_type
     deletion_protection_enabled = true
 
     disk_autoresize = false
     disk_size = var.database_disk_size_gb
     disk_type = "PD_SSD"
+
+    password_validation_policy {
+      min_length = 20
+      enable_password_policy = true
+    }
 
     backup_configuration {
       enabled = true
@@ -24,13 +29,13 @@ resource "google_sql_database_instance" "website" {
       transaction_log_retention_days = 7
 
       backup_retention_settings {
-        retained_backups = 14
+        retained_backups = var.database_retain_backup_count
       }
     }
 
     ip_configuration {
       ipv4_enabled = true
-      require_ssl = true
+      ssl_mode = "TRUSTED_CLIENT_CERTIFICATE_REQUIRED"
     }
 
     maintenance_window {

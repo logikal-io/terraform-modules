@@ -47,6 +47,18 @@ variable "database_tier" {
   default = "db-custom-1-3840" # 1 vCPU and 3840 MB
 }
 
+variable "database_availability_type" {
+  description = "The database availability type to use"
+  type = string
+  default = "REGIONAL"
+}
+
+variable "database_retain_backup_count" {
+  description = "The number of database backups to retain"
+  type = string
+  default = 14
+}
+
 variable "database_disk_size_gb" {
   description = "The database disk size to use"
   type = string
