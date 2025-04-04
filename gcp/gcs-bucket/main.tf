@@ -12,8 +12,6 @@ resource "google_storage_bucket" "this" {
   name = "${var.name}-${var.suffix}"
   location = var.location
   storage_class = var.storage_class
-
-  uniform_bucket_level_access = true
 }
 
 resource "google_storage_bucket_iam_member" "public" {
