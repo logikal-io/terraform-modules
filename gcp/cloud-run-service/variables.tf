@@ -1,15 +1,25 @@
-variable "project" {
-  description = "The project to use"
+variable "project_id" {
   type = string
 }
 
-variable "project_id" {
-  description = "The project ID to use"
+variable "name" {
+  type = string
+}
+
+variable "region" {
+  type = string
+}
+
+variable "domain_project_id" {
+  type = string
+  default = null
+}
+
+variable "domain_managed_zone_name" {
   type = string
 }
 
 variable "domain" {
-  description = "The service domain"
   type = string
 
   validation {
@@ -20,67 +30,83 @@ variable "domain" {
   }
 }
 
-variable "name" {
-  description = "The service name to use"
-  type = string
+variable "alert_notification_channel_ids" {
+  type = list(string)
 }
 
-variable "region" {
-  description = "The region in which the service should be deployed"
+variable "alert_severity" {
   type = string
+  default = "ERROR"
 }
 
 variable "server_cpu" {
-  description = "The number of server vCPU cores to use"
   type = string
   default = "1"
 }
 
 variable "server_memory" {
-  description = "The amount of server memory to use"
   type = string
   default = "512Mi"
 }
 
 variable "min_instances" {
-  description = "The number of minimum server instances"
   type = number
   default = 1
 }
 
 variable "max_instances" {
-  description = "The number of maximum server instances"
   type = number
   default = 2
 }
 
 variable "image" {
-  description = "The image to use"
   type = string
+  default = null
+}
+
+variable "image_version" {
+  type = string
+  default = "latest"
+}
+
+variable "container_port" {
+  type = number
+}
+
+variable "startup_probe_period_seconds" {
+  type = number
+  default = 10
+}
+
+variable "env" {
+  type = map(string)
+  default = {}
+}
+
+variable "env_secrets" {
+  type = map(string)
+  default = {}
+}
+
+variable "allowed_source_ip_ranges" {
+  type = list(string)
+  default = null
 }
 
 variable "cloud_sql_instances" {
-  description = "The Cloud SQL instances to mount into the service container"
+  type = list(object({
+    name = string
+    connection_name = string
+  }))
+  default = []
+}
+
+variable "secret_ids" {
   type = list(string)
   default = []
 }
 
-variable "container_port" {
-  description = "The container port to use"
-  type = number
-}
-
-variable "env" {
-  description = "The environment variables to set"
-  type = map(string)
-}
-
-variable "security_policy" {
-  description = "The security policy ID to use"
+variable "publisher_service_account_email" {
   type = string
-}
-
-variable "publisher_service_account" {
-  description = "The publisher service account email address to use"
-  type = string
+  default = null
 }
