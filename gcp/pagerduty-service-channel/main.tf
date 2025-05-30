@@ -25,6 +25,30 @@ resource "pagerduty_service" "this" {
   }
 }
 
+resource "pagerduty_event_orchestration_service" "this" {
+  service = pagerduty_service.this.id
+  enable_event_orchestration_for_service = true
+  set {
+    id = "start"
+    dynamic "rule" {
+      for_each = ["Warning", "Error", "Critical"]
+
+      content {
+        label = "set-to-${lower(rule.value)}"
+        condition {
+          expression = "event.custom_details.incident.severity matches '${rule.value}'"
+        }
+        actions {
+          severity = "${lower(rule.value)}"
+        }
+      }
+    }
+  }
+  catch_all {
+    actions {}
+  }
+}
+
 resource "pagerduty_service_integration" "this" {
   name = "Google Cloud Monitoring"
   type = "events_api_v2_inbound_integration"
