@@ -1,3 +1,3 @@
-# Google Cloud Platform Cloud Run Service Module
+# Google Cloud Platform Cloud Composer Module
 
-This module creates a Cloud Run service with a load balancer.
+This module creates a Cloud Composer instance including connection secrets.
