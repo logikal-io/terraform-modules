@@ -20,3 +20,24 @@ provider "registry.terraform.io/hashicorp/google" {
     "zh:f569b65999264a9416862bca5cd2a6177d94ccb0424f3a4ef424428912b9cb3c",
   ]
 }
+
+provider "registry.terraform.io/pagerduty/pagerduty" {
+  version     = "3.26.2"
+  constraints = "~> 3.25"
+  hashes = [
+    "h1:ULdjpDAIc2e8vSSozzstFmJx5TQuDw+0kNsaevbdjuo=",
+    "zh:0b8fc63462ec8cd11928382a9b821676400006fac65168c083f1ec1682f16716",
+    "zh:27ab23e9f8498a935fb493a3cf3a43a0a595161fe28089b1d9b02a3ce4472f9e",
+    "zh:32597790d6c54fbf8d6b013cc1187e5e90be1b8a8543dea456a16e779e792ec2",
+    "zh:39e4add84891f1774d61d80ea2242f1cff885babaf53745a8be283cd61a208cf",
+    "zh:4e088a607f2cdf696fa29bc9c76c7c9d288e0abec9528dc0c5c325fe1e5c61da",
+    "zh:64798074a554c758779a95b91cfb798334dc9043caebd0d6fa4413e8a63ab27e",
+    "zh:6efbe3994521172f0a87b45403afd31516dcb864fa622dadd71ba4ea3908a6af",
+    "zh:6f640ff19a3b368b08eb84300cccd5a18c370e33e1c6cb3181b29cedd026c099",
+    "zh:80d47094b473804ecc801ab730e017339b5d86e6d799c80d715b2f9e6186d302",
+    "zh:96c769262ea873c4beef86b1a5ae7b82dfec66e490de2fa35e9380172ea7b73e",
+    "zh:ac04c17f6e1259e670d497b384a51d833446cbf1ae042f4325856444adb47b60",
+    "zh:e53170e0b57ca5a61a634639cd9972af70ff723d7f821004a461c3dc16c774f9",
+    "zh:fe912815b8e263755fc122c6d7af0c5f60404bc2aec33ddfdd770a9d1624ef45",
+  ]
+}

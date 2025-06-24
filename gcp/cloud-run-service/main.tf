@@ -95,9 +95,13 @@ resource "google_cloud_run_v2_service" "this" {
           }
         }
       }
-      volume_mounts {
-        name = "cloudsql"
-        mount_path = "/cloudsql"
+      dynamic "volume_mounts" {
+        for_each = length(var.cloud_sql_instances) > 0 ? [1] : []
+
+        content {
+          name = "cloudsql"
+          mount_path = "/cloudsql"
+        }
       }
       resources {
         limits = {
@@ -126,10 +130,24 @@ resource "google_cloud_run_v2_service" "this" {
         }
       }
     }
-    volumes {
-      name = "cloudsql"
-      cloud_sql_instance {
-        instances = [for instance in var.cloud_sql_instances : instance.connection_name]
+    dynamic "vpc_access" {
+      for_each = var.egress_subnetwork_id != null ? [1] : []
+
+      content {
+        network_interfaces {
+          subnetwork = var.egress_subnetwork_id
+        }
+        egress = "ALL_TRAFFIC"
+      }
+    }
+    dynamic "volumes" {
+      for_each = length(var.cloud_sql_instances) > 0 ? [1] : []
+
+      content {
+        name = "cloudsql"
+        cloud_sql_instance {
+          instances = [for instance in var.cloud_sql_instances : instance.connection_name]
+        }
       }
     }
   }

@@ -1,5 +1,5 @@
 output "web_server_url" {
-  value = google_composer_environment.this.config.0.airflow_uri
+  value = google_composer_environment.this.config[0].airflow_uri
 }
 
 output "service_account_email" {

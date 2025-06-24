@@ -39,7 +39,7 @@ resource "pagerduty_event_orchestration_service" "this" {
           expression = "event.custom_details.incident.severity matches '${rule.value}'"
         }
         actions {
-          severity = "${lower(rule.value)}"
+          severity = lower(rule.value)
         }
       }
     }

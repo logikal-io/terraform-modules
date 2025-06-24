@@ -88,6 +88,11 @@ variable "env_secrets" {
   default = {}
 }
 
+variable "egress_subnetwork_id" {
+  type = string
+  default = null
+}
+
 variable "allowed_source_ip_ranges" {
   type = list(string)
   default = null
