@@ -9,7 +9,7 @@ terraform {
 }
 
 resource "google_storage_bucket" "this" {
-  name = "${var.name}-${var.suffix}"
+  name = "${var.name}-${var.name_suffix}"
   location = var.location
   storage_class = var.storage_class
 }
