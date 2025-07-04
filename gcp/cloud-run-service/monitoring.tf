@@ -67,6 +67,10 @@ resource "google_monitoring_uptime_check_config" "this" {
       host = var.domain
     }
   }
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # Alerts

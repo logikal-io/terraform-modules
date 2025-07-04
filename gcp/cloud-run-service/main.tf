@@ -216,6 +216,10 @@ resource "google_compute_managed_ssl_certificate" "this" {
   }
 
   depends_on = [google_project_service.certificate_manager, google_project_service.compute_engine]
+
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 resource "google_compute_target_https_proxy" "this" {
