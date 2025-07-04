@@ -6,7 +6,7 @@ referencing the appropriate GitHub path and tag:
 .. code-block:: terraform
 
     module "static_site" {
-      source = "github.com/logikal-io/terraform-modules//gcp/static-site?ref=v.1.0.0
+      source = "github.com/logikal-io/terraform-modules//gcp/static-site?ref=v1.0.0
 
       ...
     }
