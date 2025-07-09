@@ -15,7 +15,7 @@ resource "google_compute_security_policy" "this" {
   # Allow rules
   rule {
     action = "allow"
-    priority = "1000"
+    priority = 1000
     match {
       versioned_expr = "SRC_IPS_V1"
       config {
@@ -34,7 +34,7 @@ resource "google_compute_security_policy" "this" {
 
     content {
       action = "allow"
-      priority = "${2000 + rule.key}"
+      priority = 2000 + rule.key
       match {
         versioned_expr = "SRC_IPS_V1"
         config {
@@ -48,7 +48,7 @@ resource "google_compute_security_policy" "this" {
   # Default deny all rule
   rule {
     action = "deny(403)"
-    priority = "2147483647"
+    priority = 2147483647
     match {
       versioned_expr = "SRC_IPS_V1"
       config {
