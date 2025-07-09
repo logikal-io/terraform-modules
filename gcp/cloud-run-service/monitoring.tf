@@ -114,7 +114,7 @@ resource "google_monitoring_alert_policy" "service_ram" {
       duration = "60s"
       comparison = "COMPARISON_GT"
       trigger {
-        count = 1
+        count = 3
       }
       aggregations {
         alignment_period = "60s"
