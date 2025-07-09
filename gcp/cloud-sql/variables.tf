@@ -30,6 +30,21 @@ variable "alert_severity" {
   type = string
 }
 
+variable "alert_cpu_threshold" {
+  type = number
+  default = 0.8
+}
+
+variable "alert_ram_threshold" {
+  type = number
+  default = 0.8
+}
+
+variable "alert_disk_threshold" {
+  type = number
+  default = 0.8
+}
+
 variable "retain_transaction_log_days" {
   type = number
   default = 7
