@@ -24,7 +24,7 @@ resource "google_monitoring_alert_policy" "db_cpu" {
   conditions {
     display_name = "high CPU usage"
     condition_threshold {
-      threshold_value = 0.8
+      threshold_value = var.alert_cpu_threshold
       duration = "60s"
       comparison = "COMPARISON_GT"
       trigger {
@@ -54,7 +54,7 @@ resource "google_monitoring_alert_policy" "db_ram" {
   conditions {
     display_name = "high RAM usage"
     condition_threshold {
-      threshold_value = 0.8
+      threshold_value = var.alert_ram_threshold
       duration = "60s"
       comparison = "COMPARISON_GT"
       trigger {
@@ -84,7 +84,7 @@ resource "google_monitoring_alert_policy" "db_disk" {
   conditions {
     display_name = "high disk usage"
     condition_threshold {
-      threshold_value = 0.8
+      threshold_value = var.alert_disk_threshold
       duration = "60s"
       comparison = "COMPARISON_GT"
       trigger {

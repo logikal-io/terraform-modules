@@ -39,6 +39,26 @@ variable "alert_severity" {
   default = "ERROR"
 }
 
+variable "availability_slo_goal" {
+  type = number
+  default = 0.995
+}
+
+variable "alert_latency_threshold_ms" {
+  type = number
+  default = 10 * 1000
+}
+
+variable "alert_cpu_threshold" {
+  type = number
+  default = 0.8
+}
+
+variable "alert_ram_threshold" {
+  type = number
+  default = 0.8
+}
+
 variable "server_cpu" {
   type = string
   default = "1"
@@ -96,6 +116,11 @@ variable "egress_subnetwork_id" {
 variable "allowed_source_ip_ranges" {
   type = list(string)
   default = null
+}
+
+variable "allow_uptime_check_source_ips" {
+  type = bool
+  default = true
 }
 
 variable "cloud_sql_instances" {

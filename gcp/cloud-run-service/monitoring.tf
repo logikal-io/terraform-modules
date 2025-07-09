@@ -35,7 +35,7 @@ resource "google_monitoring_slo" "availability" {
   slo_id = "${google_cloud_run_v2_service.this.name}-availability"
   display_name = "${google_cloud_run_v2_service.this.name} service availability"
 
-  goal = 0.995
+  goal = var.availability_slo_goal
   calendar_period = "MONTH"
 
   basic_sli {
@@ -80,7 +80,7 @@ resource "google_monitoring_alert_policy" "service_cpu" {
   conditions {
     display_name = "high CPU usage"
     condition_threshold {
-      threshold_value = 0.8
+      threshold_value = var.alert_cpu_threshold
       duration = "60s"
       comparison = "COMPARISON_GT"
       trigger {
@@ -110,7 +110,7 @@ resource "google_monitoring_alert_policy" "service_ram" {
   conditions {
     display_name = "high RAM usage"
     condition_threshold {
-      threshold_value = 0.8
+      threshold_value = var.alert_ram_threshold
       duration = "60s"
       comparison = "COMPARISON_GT"
       trigger {
@@ -140,14 +140,16 @@ resource "google_monitoring_alert_policy" "service_latency" {
   conditions {
     display_name = "high request latency"
     condition_threshold {
-      threshold_value = 10000
-      duration = "0s"
+      threshold_value = var.alert_latency_threshold_ms
+      duration = "300s"
       comparison = "COMPARISON_GT"
       trigger {
         count = 1
       }
       aggregations {
-        alignment_period = "300s"
+        alignment_period = "300s" # 5 minutes
+        cross_series_reducer = "REDUCE_PERCENTILE_95"
+        group_by_fields = ["resource.label.service_name"]
         per_series_aligner = "ALIGN_PERCENTILE_95"
       }
       filter = join(" ", [
@@ -155,6 +157,7 @@ resource "google_monitoring_alert_policy" "service_latency" {
         "AND resource.labels.service_name = \"${google_cloud_run_v2_service.this.name}\"",
         "AND metric.type = \"run.googleapis.com/request_latencies\"",
       ])
+      evaluation_missing_data = "EVALUATION_MISSING_DATA_NO_OP"
     }
   }
   severity = var.alert_severity
@@ -171,16 +174,13 @@ resource "google_monitoring_alert_policy" "uptime_check_failure" {
       duration = "60s"
       comparison = "COMPARISON_GT"
       trigger {
-        count = 1
+        count = 3
       }
       aggregations {
-        alignment_period = "1200s"
-        cross_series_reducer = "REDUCE_COUNT_FALSE"
-        group_by_fields = [
-          "resource.label.project_id",
-          "resource.label.host"
-        ]
-        per_series_aligner = "ALIGN_NEXT_OLDER"
+        alignment_period = "60s"
+        cross_series_reducer = "REDUCE_MAX"
+        group_by_fields = ["resource.label.check_id"]
+        per_series_aligner = "ALIGN_COUNT_FALSE"
       }
       filter = join(" ", [
         "resource.type = \"uptime_url\"",
@@ -188,39 +188,41 @@ resource "google_monitoring_alert_policy" "uptime_check_failure" {
         "AND metric.labels.check_id =",
         "\"${google_monitoring_uptime_check_config.this.uptime_check_id}\"",
       ])
+      evaluation_missing_data = "EVALUATION_MISSING_DATA_ACTIVE"
     }
   }
-
   severity = var.alert_severity
   notification_channels = var.alert_notification_channel_ids
 }
 
-resource "google_monitoring_alert_policy" "error_rate" {
-  display_name = "${google_cloud_run_v2_service.this.name}-error-rate"
+resource "google_monitoring_alert_policy" "server_error" {
+  display_name = "${google_cloud_run_v2_service.this.name}-server-error"
   combiner = "OR"
 
   conditions {
-    display_name = "high request error rate"
+    display_name = "server error"
     condition_threshold {
-      threshold_value = 10
-      duration = "0s"
+      threshold_value = 1
+      duration = "60s"
       comparison = "COMPARISON_GT"
       trigger {
-        percent = 10
+        count = 1
       }
       aggregations {
-        alignment_period = "300s"
-        per_series_aligner = "ALIGN_RATE"
+        alignment_period = "60s"
+        cross_series_reducer = "REDUCE_SUM"
+        group_by_fields = ["resource.label.service_name"]
+        per_series_aligner = "ALIGN_SUM"
       }
       filter = join(" ", [
         "resource.type = \"cloud_run_revision\"",
-        "AND resource.labels.service_name = \"${google_cloud_run_v2_service.this.name}\"",
         "AND metric.type = \"run.googleapis.com/request_count\"",
         "AND metric.labels.response_code_class = \"5xx\"",
+        "AND resource.labels.service_name = \"${google_cloud_run_v2_service.this.name}\"",
       ])
+      evaluation_missing_data = "EVALUATION_MISSING_DATA_NO_OP"
     }
   }
-
   severity = var.alert_severity
   notification_channels = var.alert_notification_channel_ids
 }
