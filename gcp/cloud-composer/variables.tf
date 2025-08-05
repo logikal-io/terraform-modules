@@ -14,6 +14,14 @@ variable "image_version" {
   type = string
 }
 
+variable "network" {
+  type = string
+}
+
+variable "subnetwork" {
+  type = string
+}
+
 variable "pypi_packages" {
   type = map(string)
   default = {}
@@ -64,15 +72,16 @@ variable "environment_size" {
 }
 
 # We are using the smallest reasonable values
-# See https://cloud.google.com/composer/docs/composer-2/scale-environments#limits
+# Note that the worker resources had to be increased because the limit values seem to be too low
+# See https://cloud.google.com/composer/docs/composer-3/scale-environments#limits
 variable "worker_cpu" {
   type = number
-  default = 0.5
+  default = 1
 }
 
 variable "worker_memory_gb" {
   type = number
-  default = 1
+  default = 4
 }
 
 variable "worker_storage_gb" {
@@ -92,12 +101,12 @@ variable "workers_max" {
 
 variable "scheduler_cpu" {
   type = number
-  default = 0.5
+  default = 1
 }
 
 variable "scheduler_memory_gb" {
   type = number
-  default = 1
+  default = 2
 }
 
 variable "scheduler_storage_gb" {
@@ -117,7 +126,7 @@ variable "triggerer_cpu" {
 
 variable "triggerer_memory_gb" {
   type = number
-  default = 1
+  default = 2
 }
 
 variable "triggerer_count" {
@@ -127,12 +136,12 @@ variable "triggerer_count" {
 
 variable "webserver_cpu" {
   type = number
-  default = 0.5
+  default = 1
 }
 
 variable "webserver_memory_gb" {
   type = number
-  default = 2
+  default = 4
 }
 
 variable "webserver_storage_gb" {
