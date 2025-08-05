@@ -50,10 +50,10 @@ resource "google_composer_environment" "this" {
           connections_prefix = local.connections_prefix
         })
         secrets-backends_order = "metastore,environment_variable,custom"
-        scheduler-dag_dir_list_interval = 10 # seconds
+        scheduler-dag_dir_list_interval = 60 # seconds
         scheduler-catchup_by_default = false
         scheduler-create_cron_data_intervals = false
-        scheduler-parsing_cleanup_interval = 10 # seconds
+        scheduler-parsing_cleanup_interval = 60 # seconds
         webserver-default_dag_run_display_number = 50
         webserver-default_wrap = true
         webserver-enable_swagger_ui = false
@@ -79,7 +79,7 @@ resource "google_composer_environment" "this" {
       }
     }
 
-    enable_private_environment = true
+    enable_private_environment = false
 
     workloads_config {
       scheduler {
@@ -117,6 +117,8 @@ resource "google_composer_environment" "this" {
 
     node_config {
       service_account = google_service_account.airflow_service.email
+      network = var.network
+      subnetwork = var.subnetwork
     }
   }
 
