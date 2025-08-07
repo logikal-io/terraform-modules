@@ -25,7 +25,7 @@ variable "domain" {
   validation {
     condition = can(regex("^[a-z0-9-.]+$", var.domain))
     error_message = (
-      "Only lowercase alphanumeric characters, dashes and dots are allowed in domains."
+    "Only lowercase alphanumeric characters, dashes and dots are allowed in domains."
     )
   }
 }
@@ -96,6 +96,31 @@ variable "container_port" {
 variable "startup_probe_period_seconds" {
   type = number
   default = 10
+}
+
+variable "startup_probe_initial_delay_seconds" {
+  type = number
+  default = 0
+}
+
+variable "startup_probe_failure_threshold" {
+  type = number
+  default = 3
+}
+
+variable "startup_probe_timeout_seconds" {
+  type = number
+  default = 3
+}
+
+variable "liveness_probe_failure_threshold" {
+  type = number
+  default = 3
+}
+
+variable "liveness_probe_timeout_seconds" {
+  type = number
+  default = 3
 }
 
 variable "env" {
