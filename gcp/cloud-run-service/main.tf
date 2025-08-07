@@ -112,18 +112,19 @@ resource "google_cloud_run_v2_service" "this" {
         startup_cpu_boost = false
       }
       liveness_probe {
-        timeout_seconds = 3
+        timeout_seconds = var.liveness_probe_timeout_seconds
         period_seconds = 30
-        failure_threshold = 3
+        failure_threshold = var.liveness_probe_failure_threshold
         http_get {
           path = "/"
           port = var.container_port
         }
       }
       startup_probe {
-        timeout_seconds = 3
+        initial_delay_seconds = var.startup_probe_initial_delay_seconds
+        timeout_seconds = var.startup_probe_timeout_seconds
         period_seconds = var.startup_probe_period_seconds
-        failure_threshold = 3
+        failure_threshold = var.startup_probe_failure_threshold
         http_get {
           path = "/"
           port = var.container_port

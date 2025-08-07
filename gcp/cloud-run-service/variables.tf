@@ -98,6 +98,31 @@ variable "startup_probe_period_seconds" {
   default = 10
 }
 
+variable "startup_probe_initial_delay_seconds" {
+  type        = number
+  default     = 0
+}
+
+variable "startup_probe_failure_threshold" {
+  type        = number
+  default     = 3
+}
+
+variable "startup_probe_timeout_seconds" {
+  type        = number
+  default     = 3
+}
+
+variable "liveness_probe_failure_threshold" {
+  type        = number
+  default     = 3
+}
+
+variable "liveness_probe_timeout_seconds" {
+  type        = number
+  default     = 3
+}
+
 variable "env" {
   type = map(string)
   default = {}
