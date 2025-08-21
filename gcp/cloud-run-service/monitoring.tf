@@ -1,4 +1,8 @@
 # Dashboard
+resource "google_project_service" "monitoring" {
+  service = "monitoring.googleapis.com"
+}
+
 resource "google_monitoring_dashboard" "this" {
   dashboard_json = templatefile(
     "${path.module}/dashboard.json",
@@ -12,6 +16,8 @@ resource "google_monitoring_dashboard" "this" {
       },
     },
   )
+
+  depends_on = [google_project_service.monitoring]
 }
 
 # Service monitoring
@@ -26,6 +32,8 @@ resource "google_monitoring_service" "this" {
       service_name = google_cloud_run_v2_service.this.name
     }
   }
+
+  depends_on = [google_project_service.monitoring]
 }
 
 # SLO
@@ -41,6 +49,8 @@ resource "google_monitoring_slo" "availability" {
   basic_sli {
     availability {}
   }
+
+  depends_on = [google_project_service.monitoring]
 }
 
 # Uptime check
@@ -71,6 +81,8 @@ resource "google_monitoring_uptime_check_config" "this" {
   lifecycle {
     create_before_destroy = true
   }
+
+  depends_on = [google_project_service.monitoring]
 }
 
 # Alerts
@@ -102,6 +114,8 @@ resource "google_monitoring_alert_policy" "service_cpu" {
   }
   severity = var.alert_severity
   notification_channels = var.alert_notification_channel_ids
+
+  depends_on = [google_project_service.monitoring]
 }
 
 resource "google_monitoring_alert_policy" "service_ram" {
@@ -132,6 +146,8 @@ resource "google_monitoring_alert_policy" "service_ram" {
   }
   severity = var.alert_severity
   notification_channels = var.alert_notification_channel_ids
+
+  depends_on = [google_project_service.monitoring]
 }
 
 resource "google_monitoring_alert_policy" "service_latency" {
@@ -162,6 +178,8 @@ resource "google_monitoring_alert_policy" "service_latency" {
   }
   severity = var.alert_severity
   notification_channels = var.alert_notification_channel_ids
+
+  depends_on = [google_project_service.monitoring]
 }
 
 resource "google_monitoring_alert_policy" "uptime_check_failure" {
@@ -193,6 +211,8 @@ resource "google_monitoring_alert_policy" "uptime_check_failure" {
   }
   severity = var.alert_severity
   notification_channels = var.alert_notification_channel_ids
+
+  depends_on = [google_project_service.monitoring]
 }
 
 resource "google_monitoring_alert_policy" "server_error" {
@@ -225,4 +245,6 @@ resource "google_monitoring_alert_policy" "server_error" {
   }
   severity = var.alert_severity
   notification_channels = var.alert_notification_channel_ids
+
+  depends_on = [google_project_service.monitoring]
 }
