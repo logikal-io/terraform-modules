@@ -13,16 +13,24 @@ resource "google_compute_security_policy" "this" {
   name = "${var.name}-service"
 
   # Allow rules
-  rule {
-    action = "allow"
-    priority = 1000
-    match {
-      versioned_expr = "SRC_IPS_V1"
-      config {
-        src_ip_ranges = var.allowed_source_ip_ranges
+  dynamic "rule" {
+    for_each = (
+      var.allowed_source_ip_ranges != null ?
+      chunklist(var.allowed_source_ip_ranges, 10) # the limit is 10 IP ranges per rule
+      : []
+    )
+
+    content {
+      action   = "allow"
+      priority = 1000 + rule.key
+      match {
+        versioned_expr = "SRC_IPS_V1"
+        config {
+          src_ip_ranges = rule.value
+        }
       }
+      description = "Allow specific IP ranges"
     }
-    description = "Allow specific IP ranges"
   }
 
   dynamic "rule" {
