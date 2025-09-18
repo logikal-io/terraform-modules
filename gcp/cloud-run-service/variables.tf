@@ -30,6 +30,11 @@ variable "domain" {
   }
 }
 
+variable "www_redirect" {
+  type = bool
+  default = false
+}
+
 variable "alert_notification_channel_ids" {
   type = list(string)
 }
