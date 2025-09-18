@@ -214,7 +214,7 @@ resource "google_compute_url_map" "this" {
       name = "www-to-root"
 
       default_url_redirect {
-        host_redirect = "${var.domain}"
+        host_redirect = var.domain
         redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
         strip_query = false
       }
