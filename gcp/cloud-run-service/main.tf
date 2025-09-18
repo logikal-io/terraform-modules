@@ -198,6 +198,29 @@ resource "google_compute_url_map" "this" {
   name = "${var.name}-service"
   default_service = google_compute_backend_service.this.id
 
+  dynamic host_rule {
+    for_each = var.www_redirect ? [1] : []
+
+    content {
+      hosts = ["www.${var.domain}"]
+      path_matcher = "www-to-root"
+    }
+  }
+
+  dynamic path_matcher {
+    for_each = var.www_redirect ? [1] : []
+
+    content {
+      name = "www-to-root"
+
+      default_url_redirect {
+        host_redirect = var.domain
+        redirect_response_code = "MOVED_PERMANENTLY_DEFAULT"
+        strip_query = false
+      }
+    }
+  }
+
   lifecycle {
     create_before_destroy = true
   }
@@ -223,11 +246,31 @@ resource "google_compute_managed_ssl_certificate" "this" {
   }
 }
 
+resource "google_compute_managed_ssl_certificate" "www" {
+  count = var.www_redirect ? 1 : 0
+
+  name = "www-${replace(var.domain, ".", "-")}"
+
+  managed {
+    domains = ["www.${var.domain}."]
+  }
+
+  depends_on = [google_project_service.certificate_manager, google_project_service.compute_engine]
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+
 resource "google_compute_target_https_proxy" "this" {
   name = "${var.name}-service"
   url_map = google_compute_url_map.this.id
   quic_override = "ENABLE"
-  ssl_certificates = [google_compute_managed_ssl_certificate.this.id]
+  ssl_certificates = compact([
+    google_compute_managed_ssl_certificate.this.id,
+    one(google_compute_managed_ssl_certificate.www[*].id),
+  ])
   http_keep_alive_timeout_sec = 610  # default value
 }
 
@@ -288,4 +331,17 @@ resource "google_dns_record_set" "this" {
   project = coalesce(var.domain_project_id, var.project_id)
 
   rrdatas = [google_compute_global_address.this.address]
+}
+
+resource "google_dns_record_set" "www" {
+  count = var.www_redirect ? 1 : 0
+
+  name = "www.${var.domain}."
+  type = "CNAME"
+  ttl = 300
+
+  managed_zone = data.google_dns_managed_zone.this.name
+  project = coalesce(var.domain_project_id, var.project_id)
+
+  rrdatas = ["${var.domain}."]
 }
