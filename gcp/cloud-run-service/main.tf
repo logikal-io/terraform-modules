@@ -116,7 +116,7 @@ resource "google_cloud_run_v2_service" "this" {
         period_seconds = 30
         failure_threshold = var.liveness_probe_failure_threshold
         http_get {
-          path = "/"
+          path = var.liveness_probe_path
           port = var.container_port
         }
       }
@@ -126,7 +126,7 @@ resource "google_cloud_run_v2_service" "this" {
         period_seconds = var.startup_probe_period_seconds
         failure_threshold = var.startup_probe_failure_threshold
         http_get {
-          path = "/"
+          path = var.startup_probe_path
           port = var.container_port
         }
       }
