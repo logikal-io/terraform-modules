@@ -98,6 +98,11 @@ variable "container_port" {
   type = number
 }
 
+variable "startup_probe_path" {
+  type = string
+  default = "/"
+}
+
 variable "startup_probe_period_seconds" {
   type = number
   default = 10
@@ -116,6 +121,11 @@ variable "startup_probe_failure_threshold" {
 variable "startup_probe_timeout_seconds" {
   type = number
   default = 3
+}
+
+variable "liveness_probe_path" {
+  type = string
+  default = "/"
 }
 
 variable "liveness_probe_failure_threshold" {
