@@ -7,7 +7,7 @@ terraform {
     commands = ["init", "validate"]
     execute = flatten([
       "find", ".", "-path", "*/.terragrunt-cache/*", "-prune", "-o", "-name", "*.tf", "-execdir",
-      "sed", "-E", "-i", "s|(source = \")\\.\\./([^\"]*)\"|\\1../../../../\\2\"|g", "{}", ";",
+      "sed", "-E", "-i", "s|(source = \")\\.\\./([^.]*)\"|\\1../../../../\\2\"|g", "{}", ";",
     ])
   }
 }
