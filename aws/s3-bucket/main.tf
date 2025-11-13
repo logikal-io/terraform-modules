@@ -3,7 +3,7 @@ terraform {
   required_providers {
     aws = {
       source = "hashicorp/aws"
-      version = "~> 5.31"
+      version = "~> 6.20"
     }
   }
 }
@@ -11,7 +11,7 @@ terraform {
 data "aws_region" "current" {}
 
 resource "aws_s3_bucket" "this" {
-  bucket = "${var.name}-${data.aws_region.current.name}-${var.suffix}"
+  bucket = "${var.name}-${data.aws_region.current.region}-${var.suffix}"
 
   tags = var.tags
 }
