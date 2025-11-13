@@ -12,11 +12,12 @@ variable "region" {
 
 variable "domain_project_id" {
   type = string
-  default = null
+  default = null # defaults to project_id
 }
 
 variable "domain_managed_zone_name" {
   type = string
+  default = null # defaults to replace(var.domain, ".", "-")
 }
 
 variable "domain" {
@@ -25,7 +26,7 @@ variable "domain" {
   validation {
     condition = can(regex("^[a-z0-9-.]+$", var.domain))
     error_message = (
-    "Only lowercase alphanumeric characters, dashes and dots are allowed in domains."
+      "Only lowercase alphanumeric characters, dashes and dots are allowed in domains."
     )
   }
 }

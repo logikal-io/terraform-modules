@@ -3,7 +3,7 @@ terraform {
   required_providers {
     google = {
       source = "hashicorp/google"
-      version = "~> 6.19"
+      version = "~> 7.10"
     }
   }
 }
@@ -262,7 +262,6 @@ resource "google_compute_managed_ssl_certificate" "www" {
   }
 }
 
-
 resource "google_compute_target_https_proxy" "this" {
   name = "${var.name}-service"
   url_map = google_compute_url_map.this.id
@@ -318,7 +317,7 @@ resource "google_compute_global_forwarding_rule" "service_http" {
 
 # DNS
 data "google_dns_managed_zone" "this" {
-  name = var.domain_managed_zone_name
+  name = coalesce(var.domain_managed_zone_name, replace(var.domain, ".", "-"))
   project = coalesce(var.domain_project_id, var.project_id)
 }
 
