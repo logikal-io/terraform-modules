@@ -197,9 +197,10 @@ variable "secret_ids" {
   default = []
 }
 
-#variable "alert_notification_channel_ids" {
-#  type = list(string)
-#}
+variable "alert_notification_channel_ids" {
+  type = list(string)
+  default = []
+}
 
 variable "alert_severity" {
   type = string

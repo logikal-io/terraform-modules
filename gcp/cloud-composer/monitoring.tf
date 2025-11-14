@@ -25,22 +25,6 @@ resource "google_monitoring_dashboard" "this" {
   depends_on = [google_project_service.monitoring]
 }
 
-# Service monitoring
-#resource "google_monitoring_service" "this" {
-#  service_id = google_composer_environment.this.name
-#  display_name = google_composer_environment.this.name
-
-#  basic_service {
-#    service_type = "CLOUD_COMPOSER"
-#    service_labels = {
-#      location = var.region
-#      service_name = google_composer_environment.this.name
-#    }
-#  }
-
-#  depends_on = [google_project_service.monitoring]
-#}
-
 # Alerts
 resource "google_monitoring_alert_policy" "scheduler_heartbeats" {
   display_name = "${google_composer_environment.this.name}-scheduler-heatbeats"
@@ -69,7 +53,7 @@ resource "google_monitoring_alert_policy" "scheduler_heartbeats" {
     }
   }
   severity = var.alert_severity
-  #notification_channels = var.alert_notification_channel_ids
+  notification_channels = var.alert_notification_channel_ids
 
   depends_on = [google_project_service.monitoring]
 }
@@ -101,7 +85,7 @@ resource "google_monitoring_alert_policy" "database_cpu_usage_time" {
     }
   }
   severity = var.alert_severity
-  #notification_channels = var.alert_notification_channel_ids
+  notification_channels = var.alert_notification_channel_ids
 
   depends_on = [google_project_service.monitoring]
 }
@@ -133,7 +117,7 @@ resource "google_monitoring_alert_policy" "parse_error_count" {
     }
   }
   severity = var.alert_severity
-  #notification_channels = var.alert_notification_channel_ids
+  notification_channels = var.alert_notification_channel_ids
 
   depends_on = [google_project_service.monitoring]
 }
@@ -165,7 +149,7 @@ resource "google_monitoring_alert_policy" "finished_task_instance_count" {
     }
   }
   severity = var.alert_severity
-  #notification_channels = var.alert_notification_channel_ids
+  notification_channels = var.alert_notification_channel_ids
 
   depends_on = [google_project_service.monitoring]
 }
@@ -197,7 +181,7 @@ resource "google_monitoring_alert_policy" "executor_running_tasks" {
     }
   }
   severity = var.alert_severity
-  #notification_channels = var.alert_notification_channel_ids
+  notification_channels = var.alert_notification_channel_ids
 
   depends_on = [google_project_service.monitoring]
 }
@@ -229,7 +213,7 @@ resource "google_monitoring_alert_policy" "failed_sla_callback_notifications" {
     }
   }
   severity = var.alert_severity
-  #notification_channels = var.alert_notification_channel_ids
+  notification_channels = var.alert_notification_channel_ids
 
   depends_on = [google_project_service.monitoring]
 }
@@ -261,7 +245,7 @@ resource "google_monitoring_alert_policy" "unfinished_task_instances" {
     }
   }
   severity = var.alert_severity
-  #notification_channels = var.alert_notification_channel_ids
+  notification_channels = var.alert_notification_channel_ids
 
   depends_on = [google_project_service.monitoring]
 }
@@ -293,7 +277,7 @@ resource "google_monitoring_alert_policy" "orphaned_task_count" {
     }
   }
   severity = var.alert_severity
-  #notification_channels = var.alert_notification_channel_ids
+  notification_channels = var.alert_notification_channel_ids
 
   depends_on = [google_project_service.monitoring]
 }
