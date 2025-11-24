@@ -32,7 +32,7 @@ variable "image_name" {
 
 variable "image_version" {
   type = string
-  default = "latest"
+  default = null
 }
 
 variable "env" {

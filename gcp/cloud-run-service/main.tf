@@ -41,6 +41,14 @@ resource "google_artifact_registry_repository" "this" {
   depends_on = [google_project_service.artifact_registry]
 }
 
+data "google_artifact_registry_docker_image" "this" {
+  count = var.image == null ? 1 : 0
+
+  location = one(google_artifact_registry_repository.this[*]).location
+  repository_id = one(google_artifact_registry_repository.this[*]).repository_id
+  image_name = var.image_version != null ? "${var.name}:${var.image_version}" : var.name
+}
+
 # Cloud Run service
 resource "google_project_service" "cloud_run" {
   service = "run.googleapis.com"
@@ -65,12 +73,10 @@ resource "google_cloud_run_v2_service" "this" {
     }
     service_account = google_service_account.this.email
     containers {
-      image = var.image != null ? var.image : join("/", [
-        "${one(google_artifact_registry_repository.this[*].location)}-docker.pkg.dev",
-        var.project_id,
-        one(google_artifact_registry_repository.this[*].repository_id),
-        "${var.name}:${var.image_version}",
-      ])
+      image = (
+        var.image != null ? var.image :
+        one(data.google_artifact_registry_docker_image.this[*]).self_link
+      )
       ports {
         container_port = var.container_port
       }
