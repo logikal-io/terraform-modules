@@ -61,16 +61,18 @@ resource "google_cloud_run_v2_service" "this" {
 
   ingress = "INGRESS_TRAFFIC_INTERNAL_LOAD_BALANCER"
 
+  scaling {
+    min_instance_count = var.min_instances
+    max_instance_count = var.max_instances
+    scaling_mode = "AUTOMATIC"
+  }
+
   template {
     execution_environment = "EXECUTION_ENVIRONMENT_GEN2"
     max_instance_request_concurrency = 100
     session_affinity = false
     timeout = "30s"
 
-    scaling {
-      min_instance_count = var.min_instances
-      max_instance_count = var.max_instances
-    }
     service_account = google_service_account.this.email
     containers {
       image = (
