@@ -1,0 +1,194 @@
+{
+  "displayName": "airflow-${environment_name}",
+  "dashboardFilters": [],
+  "description": "",
+  "labels": {},
+  "mosaicLayout": {
+    "columns": 48,
+    "tiles": [
+      {
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "Scheduler Heartbeats [SUM]",
+          "id": "",
+          "alertChart": {"name": "${alert_policy_name["scheduler_heartbeats"]}"}
+        }
+      },
+      {
+        "xPos": 24,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "Parse Error Count [SUM]",
+          "id": "",
+          "alertChart": {"name": "${alert_policy_name["parse_error_count"]}"}
+        }
+      },
+      {
+        "yPos": 16,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "Failed SLA callback notifications [SUM]",
+          "id": "",
+          "alertChart": {"name": "${alert_policy_name["failed_sla_callback_notifications"]}"}
+        }
+      },
+      {
+        "yPos": 16,
+        "xPos": 24,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "Orphaned task count [SUM]",
+          "id": "",
+          "alertChart": {"name": "${alert_policy_name["orphaned_task_count"]}"}
+        }
+      },
+      {
+        "yPos": 32,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "DAG run schedule delay [SUM]",
+          "id": "",
+          "alertChart": {"name": "${alert_policy_name["dag_run_schedule_delay"]}"}
+        }
+      },
+      {
+        "yPos": 32,
+        "xPos": 24,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "DAG file load time [SUM]",
+          "id": "",
+          "alertChart": {"name": "${alert_policy_name["dag_file_load_time"]}"}
+        }
+      },
+      {
+        "yPos": 48,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "Database CPU utilization [SUM]",
+          "alertChart": {"name": "${alert_policy_name["database_cpu_utilization"]}"}
+        }
+      },
+      {
+        "yPos": 48,
+        "xPos": 24,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "Database disk utilization [SUM]",
+          "alertChart": {"name": "${alert_policy_name["database_disk_utilization"]}"}
+        }
+      },
+      {
+        "yPos": 64,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "Database memory utilization [SUM]",
+          "alertChart": {"name": "${alert_policy_name["database_memory_utilization"]}"}
+        }
+      },
+      {
+        "yPos": 64,
+        "xPos": 24,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "Database Healthy [MEAN]",
+          "alertChart": {"name": "${alert_policy_name["database_healthy"]}"}
+        }
+      },
+      {
+        "yPos": 80,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "Executor Open Slots [SUM]",
+          "alertChart": {"name": "${alert_policy_name["executor_open_slots"]}"}
+        }
+      },
+      {
+        "yPos": 80,
+        "xPos": 24,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "Healthy [MEAN]",
+          "alertChart": {"name": "${alert_policy_name["healthy"]}"}
+        }
+      },
+      {
+        "yPos": 96,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "Web server health [MEAN]",
+          "alertChart": {"name": "${alert_policy_name["web_server_health"]}"}
+        }
+      },
+      {
+        "yPos": 96,
+        "xPos": 24,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "Scheduler Pod Eviction Count [SUM]",
+          "alertChart": {"name": "${alert_policy_name["scheduler_pod_eviction_count"]}"}
+        }
+      },
+      {
+        "yPos": 112,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "Worker Pod Eviction Count [SUM]",
+          "alertChart": {"name": "${alert_policy_name["worker_pod_eviction_count"]}"}
+        }
+      },
+      {
+        "yPos": 112,
+        "xPos": 24,
+        "height": 16,
+        "width": 24,
+        "widget": {
+          "title": "DAG run duration [SUM]",
+          "xyChart": {
+            "chartOptions": {
+              "displayHorizontal": false,
+              "mode": "COLOR"
+            },
+            "dataSets": [
+              {
+                "minAlignmentPeriod": "60s",
+                "plotType": "LINE",
+                "targetAxis": "Y1",
+                "timeSeriesQuery": {
+                  "timeSeriesFilter": {
+                    "aggregation": {
+                      "alignmentPeriod": "60s",
+                      "crossSeriesReducer": "REDUCE_SUM",
+                      "groupByFields": [],
+                      "perSeriesAligner": "ALIGN_MEAN"
+                    },
+                    "filter": "metric.type=\"composer.googleapis.com/workflow/dag/run_duration\" resource.type=\"cloud_composer_workflow\""
+                  }
+                }
+              }
+            ],
+            "thresholds": [],
+            "yAxis": {
+              "scale": "LINEAR"
+            }
+          }
+        }
+      }
+    ]
+  }
+}
