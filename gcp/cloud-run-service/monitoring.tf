@@ -96,12 +96,11 @@ resource "google_monitoring_alert_policy" "service_cpu" {
       duration = "60s"
       comparison = "COMPARISON_GT"
       trigger {
-        count = 3
+        count = 1
       }
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_PERCENTILE_99"
-        group_by_fields = ["resource.label.service_name"]
         per_series_aligner = "ALIGN_DELTA"
       }
       filter = join(" ", [
@@ -128,12 +127,11 @@ resource "google_monitoring_alert_policy" "service_ram" {
       duration = "60s"
       comparison = "COMPARISON_GT"
       trigger {
-        count = 3
+        count = 1
       }
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_PERCENTILE_99"
-        group_by_fields = ["resource.label.service_name"]
         per_series_aligner = "ALIGN_DELTA"
       }
       filter = join(" ", [

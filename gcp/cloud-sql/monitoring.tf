@@ -28,12 +28,11 @@ resource "google_monitoring_alert_policy" "db_cpu" {
       duration = "60s"
       comparison = "COMPARISON_GT"
       trigger {
-        count = 3
+        count = 1
       }
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_MAX"
-        group_by_fields = ["resource.label.database_id"]
         per_series_aligner = "ALIGN_MAX"
       }
       filter = join(" ", [
@@ -58,12 +57,11 @@ resource "google_monitoring_alert_policy" "db_ram" {
       duration = "60s"
       comparison = "COMPARISON_GT"
       trigger {
-        count = 3
+        count = 1
       }
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_MAX"
-        group_by_fields = ["resource.label.database_id"]
         per_series_aligner = "ALIGN_MAX"
       }
       filter = join(" ", [
