@@ -48,7 +48,6 @@ resource "google_monitoring_alert_policy" "scheduler_heartbeats" {
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_SUM"
-        group_by_fields = ["resource.label.environment_name"]
         per_series_aligner = "ALIGN_SUM"
       }
       filter = join(" ", [
@@ -80,7 +79,6 @@ resource "google_monitoring_alert_policy" "parse_error_count" {
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_SUM"
-        group_by_fields = ["resource.label.environment_name"]
         per_series_aligner = "ALIGN_SUM"
       }
       filter = join(" ", [
@@ -112,7 +110,6 @@ resource "google_monitoring_alert_policy" "failed_sla_callback_notifications" {
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_SUM"
-        group_by_fields = ["resource.label.environment_name"]
         per_series_aligner = "ALIGN_DELTA"
       }
       filter = join(" ", [
@@ -144,7 +141,6 @@ resource "google_monitoring_alert_policy" "orphaned_task_count" {
       aggregations {
         alignment_period = "300s"
         cross_series_reducer = "REDUCE_SUM"
-        group_by_fields = ["resource.label.environment_name"]
         per_series_aligner = "ALIGN_DELTA"
       }
       filter = join(" ", [
@@ -176,7 +172,6 @@ resource "google_monitoring_alert_policy" "dag_run_schedule_delay" {
       aggregations {
         alignment_period = "300s"
         cross_series_reducer = "REDUCE_SUM"
-        group_by_fields = ["resource.label.environment_name"]
         per_series_aligner = "ALIGN_SUM"
       }
       filter = join(" ", [
@@ -208,7 +203,6 @@ resource "google_monitoring_alert_policy" "dag_file_load_time" {
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_MEAN"
-        group_by_fields = ["resource.label.environment_name"]
         per_series_aligner = "ALIGN_MEAN"
       }
       filter = join(" ", [
@@ -240,7 +234,6 @@ resource "google_monitoring_alert_policy" "database_cpu_utilization" {
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_MEAN"
-        group_by_fields = ["resource.label.environment_name"]
         per_series_aligner = "ALIGN_MEAN"
       }
       filter = join(" ", [
@@ -272,7 +265,6 @@ resource "google_monitoring_alert_policy" "database_disk_utilization" {
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_MEAN"
-        group_by_fields = ["resource.label.environment_name"]
         per_series_aligner = "ALIGN_MEAN"
       }
       filter = join(" ", [
@@ -304,7 +296,6 @@ resource "google_monitoring_alert_policy" "database_memory_utilization" {
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_MEAN"
-        group_by_fields = ["resource.label.environment_name"]
         per_series_aligner = "ALIGN_MEAN"
       }
       filter = join(" ", [
@@ -336,7 +327,6 @@ resource "google_monitoring_alert_policy" "database_healthy" {
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_MAX"
-        group_by_fields = ["resource.label.environment_name"]
         per_series_aligner = "ALIGN_COUNT_FALSE"
       }
       filter = join(" ", [
@@ -368,7 +358,6 @@ resource "google_monitoring_alert_policy" "executor_open_slots" {
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_MEAN"
-        group_by_fields = ["resource.label.environment_name"]
         per_series_aligner = "ALIGN_MEAN"
       }
       filter = join(" ", [
@@ -400,7 +389,6 @@ resource "google_monitoring_alert_policy" "healthy" {
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_MAX"
-        group_by_fields = ["resource.label.environment_name"]
         per_series_aligner = "ALIGN_COUNT_FALSE"
       }
       filter = join(" ", [
@@ -432,7 +420,6 @@ resource "google_monitoring_alert_policy" "web_server_health" {
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_MAX"
-        group_by_fields = ["resource.label.environment_name"]
         per_series_aligner = "ALIGN_COUNT_FALSE"
       }
       filter = join(" ", [
@@ -464,7 +451,6 @@ resource "google_monitoring_alert_policy" "scheduler_pod_eviction_count" {
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_SUM"
-        group_by_fields = ["resource.label.environment_name"]
         per_series_aligner = "ALIGN_DELTA"
       }
       filter = join(" ", [
@@ -496,7 +482,6 @@ resource "google_monitoring_alert_policy" "worker_pod_eviction_count" {
       aggregations {
         alignment_period = "60s"
         cross_series_reducer = "REDUCE_SUM"
-        group_by_fields = ["resource.label.environment_name"]
         per_series_aligner = "ALIGN_DELTA"
       }
       filter = join(" ", [
