@@ -25,15 +25,14 @@ resource "google_monitoring_alert_policy" "db_cpu" {
     display_name = "high CPU usage"
     condition_threshold {
       threshold_value = var.alert_cpu_threshold
-      duration = "60s"
+      duration = "180s"
       comparison = "COMPARISON_GT"
       trigger {
         count = 1
       }
       aggregations {
-        alignment_period = "60s"
-        cross_series_reducer = "REDUCE_MAX"
-        per_series_aligner = "ALIGN_MAX"
+        alignment_period = "180s"
+        per_series_aligner = "ALIGN_MEAN"
       }
       filter = join(" ", [
         "resource.type = \"cloudsql_database\"",
@@ -54,14 +53,13 @@ resource "google_monitoring_alert_policy" "db_ram" {
     display_name = "high RAM usage"
     condition_threshold {
       threshold_value = var.alert_ram_threshold
-      duration = "60s"
+      duration = "180s"
       comparison = "COMPARISON_GT"
       trigger {
         count = 1
       }
       aggregations {
-        alignment_period = "60s"
-        cross_series_reducer = "REDUCE_MAX"
+        alignment_period = "180s"
         per_series_aligner = "ALIGN_MAX"
       }
       filter = join(" ", [
@@ -83,15 +81,13 @@ resource "google_monitoring_alert_policy" "db_disk" {
     display_name = "high disk usage"
     condition_threshold {
       threshold_value = var.alert_disk_threshold
-      duration = "60s"
+      duration = "180s"
       comparison = "COMPARISON_GT"
       trigger {
-        count = 3
+        count = 1
       }
       aggregations {
-        alignment_period = "60s"
-        cross_series_reducer = "REDUCE_MAX"
-        group_by_fields = ["resource.label.database_id"]
+        alignment_period = "180s"
         per_series_aligner = "ALIGN_MAX"
       }
       filter = join(" ", [
