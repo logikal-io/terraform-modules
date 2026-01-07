@@ -1,5 +1,5 @@
 {
-  "displayName": "${database_id}-db",
+  "displayName": "${name}",
   "mosaicLayout": {
     "columns": 48,
     "tiles": [
@@ -25,7 +25,7 @@
         "width": 16,
         "height": 16,
         "widget": {
-          "title": "Connections | ${database_id}",
+          "title": "Connections | ${database_instance}",
           "xyChart": {
             "dataSets": [
               {
@@ -34,7 +34,7 @@
                     "filter": "metric.type=\"cloudsql.googleapis.com/database/postgresql/num_backends\" resource.type=\"cloudsql_database\" resource.label.\"database_id\"=\"${database_id}\"",
                     "aggregation": {
                       "alignmentPeriod": "60s",
-                      "perSeriesAligner": "ALIGN_MEAN",
+                      "perSeriesAligner": "ALIGN_MAX",
                       "crossSeriesReducer": "REDUCE_SUM",
                       "groupByFields": ["metric.label.\"database\""]
                     }
@@ -54,7 +54,63 @@
         "width": 16,
         "height": 16,
         "widget": {
-          "title": "Disk IO | ${database_id}",
+          "title": "Query Latencies | ${database_instance}",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "timeSeriesFilter": {
+                    "filter": "metric.type=\"cloudsql.googleapis.com/database/postgresql/insights/perquery/latencies\" resource.type=\"cloudsql_instance_database\" resource.label.\"resource_id\"=\"${database_id}\"",
+                    "aggregation": {
+                      "alignmentPeriod": "60s",
+                      "perSeriesAligner": "ALIGN_DELTA",
+                      "crossSeriesReducer": "REDUCE_SUM"
+                    }
+                  }
+                },
+                "plotType": "HEATMAP",
+                "minAlignmentPeriod": "60s"
+              }
+            ],
+            "yAxis": {"scale": "LOG10"}
+          }
+        }
+      },
+      {
+        "xPos": 32,
+        "yPos": 16,
+        "width": 16,
+        "height": 16,
+        "widget": {
+          "title": "Transactions | ${database_instance}",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "timeSeriesFilter": {
+                    "filter": "metric.type=\"cloudsql.googleapis.com/database/postgresql/transaction_count\" resource.type=\"cloudsql_database\" resource.label.\"database_id\"=\"${database_id}\"",
+                    "aggregation": {
+                      "alignmentPeriod": "60s",
+                      "perSeriesAligner": "ALIGN_RATE",
+                      "crossSeriesReducer": "REDUCE_SUM",
+                      "groupByFields": ["metric.label.\"database\""]
+                    }
+                  }
+                },
+                "plotType": "STACKED_AREA",
+                "legendTemplate": "$${metric.labels.database}",
+                "minAlignmentPeriod": "60s"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "yPos": 32,
+        "width": 16,
+        "height": 16,
+        "widget": {
+          "title": "Disk IO | ${database_instance}",
           "xyChart": {
             "dataSets": [
               {
@@ -92,12 +148,12 @@
         }
       },
       {
-        "xPos": 32,
-        "yPos": 16,
+        "xPos": 16,
+        "yPos": 32,
         "width": 16,
         "height": 16,
         "widget": {
-          "title": "Network IO | ${database_id}",
+          "title": "Network IO | ${database_instance}",
           "xyChart": {
             "dataSets": [
               {
@@ -135,11 +191,12 @@
         }
       },
       {
+        "xPos": 32,
         "yPos": 32,
         "width": 16,
         "height": 16,
         "widget": {
-          "title": "Deadlocks | ${database_id}",
+          "title": "Deadlocks | ${database_instance}",
           "xyChart": {
             "dataSets": [
               {
@@ -148,14 +205,14 @@
                     "filter": "metric.type=\"cloudsql.googleapis.com/database/postgresql/deadlock_count\" resource.type=\"cloudsql_database\" resource.label.\"database_id\"=\"${database_id}\"",
                     "aggregation": {
                       "alignmentPeriod": "60s",
-                      "perSeriesAligner": "ALIGN_RATE",
+                      "perSeriesAligner": "ALIGN_SUM",
                       "crossSeriesReducer": "REDUCE_SUM",
-                      "groupByFields": ["resource.label.\"database_id\""]
+                      "groupByFields": ["metric.label.\"database\""]
                     }
                   }
                 },
-                "plotType": "STACKED_AREA",
-                "legendTemplate": "$${resource.labels.database_id}",
+                "plotType": "STACKED_BAR",
+                "legendTemplate": "$${metric.labels.database}",
                 "minAlignmentPeriod": "60s"
               }
             ]

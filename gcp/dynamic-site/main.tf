@@ -84,6 +84,7 @@ module "cloud_run_job" {
   image = module.cloud_run_service.image
   env = var.env
   command = var.job_command != null ? var.job_command : ["orb", var.name, "--command"]
+  egress_subnetwork_id = var.job_egress_subnetwork_id
   args = ["manage"]
   service_account_email = module.cloud_run_service.service_account_email
   cloud_sql_instances = [module.cloud_sql]

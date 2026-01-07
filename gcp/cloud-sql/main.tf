@@ -57,6 +57,13 @@ resource "google_sql_database_instance" "this" {
       hour = var.maintenance_window_hour
       update_track = "stable"
     }
+
+    insights_config {
+      query_insights_enabled = true
+      query_string_length = 1024
+      record_client_address = true
+      query_plans_per_minute = 5
+    }
   }
 }
 

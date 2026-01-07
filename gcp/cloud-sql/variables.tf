@@ -52,7 +52,7 @@ variable "retain_transaction_log_days" {
 
 variable "retain_backup_count" {
   type = number
-  default = 7
+  default = 30
 }
 
 variable "backup_start_time" {

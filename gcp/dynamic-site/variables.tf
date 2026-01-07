@@ -112,6 +112,11 @@ variable "job_command" {
   default = null # defaults to ["orb", var.name, "--command"]
 }
 
+variable "job_egress_subnetwork_id" {
+  type = string
+  default = null
+}
+
 # Database variables
 variable "database_version" {
   type = string
@@ -151,7 +156,7 @@ variable "database_retain_transaction_log_days" {
 
 variable "database_retain_backup_count" {
   type = number
-  default = 7
+  default = 30
 }
 
 variable "database_backup_start_time" {
