@@ -1,0 +1,104 @@
+{
+  "displayName": "${name}",
+  "mosaicLayout": {
+    "columns": 48,
+    "tiles": [
+      {
+        "width": 24,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["environment_health"]}"}}
+      },
+      {
+        "xPos": 24,
+        "width": 24,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["web_server_health"]}"}}
+      },
+      {
+        "yPos": 16,
+        "width": 24,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["scheduler_heartbeats"]}"}}
+      },
+      {
+        "xPos": 24,
+        "yPos": 16,
+        "width": 24,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["db_health"]}"}}
+      },
+      {
+        "yPos": 32,
+        "width": 24,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["dag_parse_errors"]}"}}
+      },
+      {
+        "xPos": 24,
+        "yPos": 32,
+        "width": 24,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["dag_load_time"]}"}}
+      },
+      {
+        "yPos": 48,
+        "width": 24,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["sla_callback_fails"]}"}}
+      },
+      {
+        "xPos": 24,
+        "yPos": 48,
+        "width": 24,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["orphaned_tasks"]}"}}
+      },
+      {
+        "yPos": 64,
+        "width": 24,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["executor_open_slots"]}"}}
+      },
+      {
+        "xPos": 24,
+        "yPos": 64,
+        "width": 24,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["scheduler_pod_evictions"]}"}}
+      },
+      {
+        "yPos": 80,
+        "width": 24,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["worker_pod_evictions"]}"}}
+      },
+      {
+        "xPos": 24,
+        "yPos": 80,
+        "width": 24,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["dag_run_schedule_delay"]}"}}
+      },
+      {
+        "yPos": 96,
+        "width": 16,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["db_disk"]}"}}
+      },
+      {
+        "xPos": 16,
+        "yPos": 96,
+        "width": 16,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["db_cpu"]}"}}
+      },
+      {
+        "xPos": 32,
+        "yPos": 96,
+        "width": 16,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["db_ram"]}"}}
+      }
+    ]
+  }
+}
