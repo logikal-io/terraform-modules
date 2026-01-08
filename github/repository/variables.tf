@@ -36,6 +36,12 @@ variable "enforce_checks_for_admins" {
   default = true
 }
 
+variable "vulnerability_alerts" {
+  description = "Whether to enable vulnerability alerts"
+  type = bool
+  default = null # defaults to not var.archived
+}
+
 variable "visibility" {
   description = "The visibility of the repository (either 'private' or 'public')"
   type = string

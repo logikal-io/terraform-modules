@@ -26,7 +26,7 @@ resource "github_repository" "this" {
   archived = var.archived
   archive_on_destroy = true
   topics = var.topics
-  vulnerability_alerts = !var.archived
+  vulnerability_alerts = coalesce(var.vulnerability_alerts, !var.archived)
 }
 
 resource "github_branch_default" "main" {
