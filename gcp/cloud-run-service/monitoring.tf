@@ -1,18 +1,30 @@
+# Metrics: https://docs.cloud.google.com/monitoring/api/metrics_gcp
+# Policies: https://docs.cloud.google.com/monitoring/api/ref_v3/rest/v3/projects.alertPolicies
+
 # Dashboard
 resource "google_project_service" "monitoring" {
   service = "monitoring.googleapis.com"
+}
+
+locals {
+  service_name = google_cloud_run_v2_service.this.name
+  monitoring_name_prefix = "${local.service_name}-service"
 }
 
 resource "google_monitoring_dashboard" "this" {
   dashboard_json = templatefile(
     "${path.module}/dashboard.json",
     {
+      "name": local.monitoring_name_prefix,
       "project_id": var.project_id,
-      "service_name": google_cloud_run_v2_service.this.name,
+      "service_name": local.service_name,
       "url_map_name": google_compute_url_map.this.name,
       "alert_policy_name": {
         "service_cpu": google_monitoring_alert_policy.service_cpu.name,
         "service_ram": google_monitoring_alert_policy.service_ram.name,
+        "service_latency": google_monitoring_alert_policy.service_latency.name,
+        "uptime_check_failure": google_monitoring_alert_policy.uptime_check_failure.name,
+        "server_error": google_monitoring_alert_policy.server_error.name,
       },
     },
   )
@@ -22,14 +34,14 @@ resource "google_monitoring_dashboard" "this" {
 
 # Service monitoring
 resource "google_monitoring_service" "this" {
-  service_id = google_cloud_run_v2_service.this.name
-  display_name = google_cloud_run_v2_service.this.name
+  service_id = local.service_name
+  display_name = local.monitoring_name_prefix
 
   basic_service {
     service_type = "CLOUD_RUN"
     service_labels = {
       location = var.region
-      service_name = google_cloud_run_v2_service.this.name
+      service_name = local.service_name
     }
   }
 
@@ -40,8 +52,8 @@ resource "google_monitoring_service" "this" {
 resource "google_monitoring_slo" "availability" {
   service = google_monitoring_service.this.service_id
 
-  slo_id = "${google_cloud_run_v2_service.this.name}-availability"
-  display_name = "${google_cloud_run_v2_service.this.name} service availability"
+  slo_id = "${local.monitoring_name_prefix}-availability"
+  display_name = "${local.service_name} service availability"
 
   goal = var.availability_slo_goal
   calendar_period = "MONTH"
@@ -55,7 +67,7 @@ resource "google_monitoring_slo" "availability" {
 
 # Uptime check
 resource "google_monitoring_uptime_check_config" "this" {
-  display_name = "${google_cloud_run_v2_service.this.name}-uptime"
+  display_name = "${local.monitoring_name_prefix}-uptime"
   timeout = "10s"
   period = "60s"
 
@@ -87,91 +99,24 @@ resource "google_monitoring_uptime_check_config" "this" {
 
 # Alerts
 resource "google_monitoring_alert_policy" "service_cpu" {
-  display_name = "${google_cloud_run_v2_service.this.name}-cpu"
+  display_name = "${local.monitoring_name_prefix}-cpu"
   combiner = "OR"
   conditions {
     display_name = "high CPU usage"
     condition_threshold {
       threshold_value = var.alert_cpu_threshold
-      duration = "60s"
+      duration = "${5 * 60}s"
       comparison = "COMPARISON_GT"
-      trigger {
-        count = 3
-      }
       aggregations {
         alignment_period = "60s"
-        cross_series_reducer = "REDUCE_PERCENTILE_99"
-        group_by_fields = ["resource.label.service_name"]
-        per_series_aligner = "ALIGN_DELTA"
+        per_series_aligner = "ALIGN_PERCENTILE_99"
+        group_by_fields = ["resource.label.revision_name"]
+        cross_series_reducer = "REDUCE_NONE"
       }
-      filter = join(" ", [
+      filter = join(" AND ", [
+        "metric.type = \"run.googleapis.com/container/cpu/utilizations\"",
         "resource.type = \"cloud_run_revision\"",
-        "AND resource.labels.service_name = \"${google_cloud_run_v2_service.this.name}\"",
-        "AND metric.type = \"run.googleapis.com/container/cpu/utilizations\"",
-      ])
-      evaluation_missing_data = "EVALUATION_MISSING_DATA_ACTIVE"
-    }
-  }
-  severity = var.alert_severity
-  notification_channels = var.alert_notification_channel_ids
-
-  depends_on = [google_project_service.monitoring]
-}
-
-resource "google_monitoring_alert_policy" "service_ram" {
-  display_name = "${google_cloud_run_v2_service.this.name}-ram"
-  combiner = "OR"
-  conditions {
-    display_name = "high RAM usage"
-    condition_threshold {
-      threshold_value = var.alert_ram_threshold
-      duration = "60s"
-      comparison = "COMPARISON_GT"
-      trigger {
-        count = 3
-      }
-      aggregations {
-        alignment_period = "60s"
-        cross_series_reducer = "REDUCE_PERCENTILE_99"
-        group_by_fields = ["resource.label.service_name"]
-        per_series_aligner = "ALIGN_DELTA"
-      }
-      filter = join(" ", [
-        "resource.type = \"cloud_run_revision\"",
-        "AND resource.labels.service_name = \"${google_cloud_run_v2_service.this.name}\"",
-        "AND metric.type = \"run.googleapis.com/container/memory/utilizations\"",
-      ])
-      evaluation_missing_data = "EVALUATION_MISSING_DATA_ACTIVE"
-    }
-  }
-  severity = var.alert_severity
-  notification_channels = var.alert_notification_channel_ids
-
-  depends_on = [google_project_service.monitoring]
-}
-
-resource "google_monitoring_alert_policy" "service_latency" {
-  display_name = "${google_cloud_run_v2_service.this.name}-latency"
-  combiner = "OR"
-  conditions {
-    display_name = "high request latency"
-    condition_threshold {
-      threshold_value = var.alert_latency_threshold_ms
-      duration = "300s"
-      comparison = "COMPARISON_GT"
-      trigger {
-        count = 1
-      }
-      aggregations {
-        alignment_period = "300s" # 5 minutes
-        cross_series_reducer = "REDUCE_PERCENTILE_95"
-        group_by_fields = ["resource.label.service_name"]
-        per_series_aligner = "ALIGN_PERCENTILE_95"
-      }
-      filter = join(" ", [
-        "resource.type = \"cloud_run_revision\"",
-        "AND resource.labels.service_name = \"${google_cloud_run_v2_service.this.name}\"",
-        "AND metric.type = \"run.googleapis.com/request_latencies\"",
+        "resource.label.service_name = \"${local.service_name}\"",
       ])
       evaluation_missing_data = "EVALUATION_MISSING_DATA_NO_OP"
     }
@@ -182,29 +127,144 @@ resource "google_monitoring_alert_policy" "service_latency" {
   depends_on = [google_project_service.monitoring]
 }
 
+resource "google_monitoring_alert_policy" "service_cpu_missing" {
+  display_name = "${local.monitoring_name_prefix}-cpu-missing"
+  combiner = "OR"
+  conditions {
+    display_name = "missing CPU usage data"
+    condition_absent {
+      duration = "${5 * 60}s"
+      aggregations {
+        alignment_period = "60s"
+        per_series_aligner = "ALIGN_PERCENTILE_99"
+        group_by_fields = ["resource.label.revision_name"]
+        cross_series_reducer = "REDUCE_NONE"
+      }
+      filter = join(" AND ", [
+        "metric.type = \"run.googleapis.com/container/cpu/utilizations\"",
+        "resource.type = \"cloud_run_revision\"",
+        "resource.label.service_name = \"${local.service_name}\"",
+      ])
+      trigger {
+        percent = 100
+      }
+    }
+  }
+  severity = var.alert_severity
+  notification_channels = var.alert_notification_channel_ids
+
+  depends_on = [google_project_service.monitoring]
+}
+
+resource "google_monitoring_alert_policy" "service_ram" {
+  display_name = "${local.monitoring_name_prefix}-ram"
+  combiner = "OR"
+  conditions {
+    display_name = "high RAM usage"
+    condition_threshold {
+      threshold_value = var.alert_ram_threshold
+      duration = "${5 * 60}s"
+      comparison = "COMPARISON_GT"
+      aggregations {
+        alignment_period = "60s"
+        per_series_aligner = "ALIGN_PERCENTILE_99"
+        group_by_fields = ["resource.label.revision_name"]
+        cross_series_reducer = "REDUCE_NONE"
+      }
+      filter = join(" AND ", [
+        "metric.type = \"run.googleapis.com/container/memory/utilizations\"",
+        "resource.type = \"cloud_run_revision\"",
+        "resource.label.service_name = \"${local.service_name}\"",
+      ])
+      evaluation_missing_data = "EVALUATION_MISSING_DATA_NO_OP"
+    }
+  }
+  severity = var.alert_severity
+  notification_channels = var.alert_notification_channel_ids
+
+  depends_on = [google_project_service.monitoring]
+}
+
+resource "google_monitoring_alert_policy" "service_ram_missing" {
+  display_name = "${local.monitoring_name_prefix}-ram-missing"
+  combiner = "OR"
+  conditions {
+    display_name = "missing RAM usage data"
+    condition_absent {
+      duration = "${5 * 60}s"
+      aggregations {
+        alignment_period = "60s"
+        per_series_aligner = "ALIGN_PERCENTILE_99"
+        group_by_fields = ["resource.label.revision_name"]
+        cross_series_reducer = "REDUCE_NONE"
+      }
+      filter = join(" AND ", [
+        "metric.type = \"run.googleapis.com/container/memory/utilizations\"",
+        "resource.type = \"cloud_run_revision\"",
+        "resource.label.service_name = \"${local.service_name}\"",
+      ])
+      trigger {
+        percent = 100
+      }
+    }
+  }
+  severity = var.alert_severity
+  notification_channels = var.alert_notification_channel_ids
+
+  depends_on = [google_project_service.monitoring]
+}
+
+resource "google_monitoring_alert_policy" "service_latency" {
+  display_name = "${local.monitoring_name_prefix}-latency"
+  combiner = "OR"
+  conditions {
+    display_name = "high request latency"
+    condition_threshold {
+      threshold_value = var.alert_latency_threshold_ms
+      duration = "60s"
+      comparison = "COMPARISON_GT"
+      aggregations {
+        alignment_period = "60s"
+        per_series_aligner = "ALIGN_PERCENTILE_99"
+        group_by_fields = ["resource.label.revision_name"]
+        cross_series_reducer = "REDUCE_NONE"
+      }
+      filter = join(" AND ", [
+        "metric.type = \"run.googleapis.com/request_latencies\"",
+        "resource.type = \"cloud_run_revision\"",
+        "resource.label.service_name = \"${local.service_name}\"",
+      ])
+      evaluation_missing_data = "EVALUATION_MISSING_DATA_NO_OP"
+    }
+  }
+  severity = var.alert_severity
+  notification_channels = var.alert_notification_channel_ids
+
+  depends_on = [google_project_service.monitoring]
+}
+
+locals {
+  uptime_check_id = google_monitoring_uptime_check_config.this.uptime_check_id
+}
+
 resource "google_monitoring_alert_policy" "uptime_check_failure" {
-  display_name = "${google_cloud_run_v2_service.this.name}-uptime-check"
+  display_name = "${local.monitoring_name_prefix}-uptime-check"
   combiner = "OR"
   conditions {
     display_name = "uptime check failure"
     condition_threshold {
-      threshold_value = 1
-      duration = "60s"
+      threshold_value = 0
+      duration = "${5 * 60}s"
       comparison = "COMPARISON_GT"
-      trigger {
-        count = 3
-      }
       aggregations {
         alignment_period = "60s"
-        cross_series_reducer = "REDUCE_MAX"
-        group_by_fields = ["resource.label.check_id"]
         per_series_aligner = "ALIGN_COUNT_FALSE"
+        cross_series_reducer = "REDUCE_SUM"
       }
-      filter = join(" ", [
+      filter = join(" AND ", [
         "resource.type = \"uptime_url\"",
-        "AND metric.type = \"monitoring.googleapis.com/uptime_check/check_passed\"",
-        "AND metric.labels.check_id =",
-        "\"${google_monitoring_uptime_check_config.this.uptime_check_id}\"",
+        "metric.type = \"monitoring.googleapis.com/uptime_check/check_passed\"",
+        "metric.label.check_id = \"${local.uptime_check_id}\"",
       ])
       evaluation_missing_data = "EVALUATION_MISSING_DATA_ACTIVE"
     }
@@ -216,29 +276,26 @@ resource "google_monitoring_alert_policy" "uptime_check_failure" {
 }
 
 resource "google_monitoring_alert_policy" "server_error" {
-  display_name = "${google_cloud_run_v2_service.this.name}-server-error"
+  display_name = "${local.monitoring_name_prefix}-server-error"
   combiner = "OR"
 
   conditions {
     display_name = "server error"
     condition_threshold {
-      threshold_value = 1
+      threshold_value = 0
       duration = "60s"
       comparison = "COMPARISON_GT"
-      trigger {
-        count = 1
-      }
       aggregations {
         alignment_period = "60s"
-        cross_series_reducer = "REDUCE_SUM"
-        group_by_fields = ["resource.label.service_name"]
         per_series_aligner = "ALIGN_SUM"
+        group_by_fields = ["resource.label.revision_name"]
+        cross_series_reducer = "REDUCE_NONE"
       }
-      filter = join(" ", [
+      filter = join(" AND ", [
+        "metric.type = \"run.googleapis.com/request_count\"",
+        "metric.label.response_code_class = \"5xx\"",
         "resource.type = \"cloud_run_revision\"",
-        "AND metric.type = \"run.googleapis.com/request_count\"",
-        "AND metric.labels.response_code_class = \"5xx\"",
-        "AND resource.labels.service_name = \"${google_cloud_run_v2_service.this.name}\"",
+        "resource.label.service_name = \"${local.service_name}\"",
       ])
       evaluation_missing_data = "EVALUATION_MISSING_DATA_NO_OP"
     }

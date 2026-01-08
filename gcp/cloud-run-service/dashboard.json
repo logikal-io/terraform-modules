@@ -1,49 +1,13 @@
 {
-  "displayName": "${service_name}",
+  "displayName": "${name}",
   "mosaicLayout": {
     "columns": 48,
     "tiles": [
       {
-        "width": 24,
+        "width": 16,
         "height": 16,
         "widget": {
-          "title": "Request Count | ${service_name}",
-          "xyChart": {
-            "dataSets": [
-              {
-                "timeSeriesQuery": {
-                  "prometheusQuery": "sum by (response_code_class)(increase(run_googleapis_com:request_count{monitored_resource=\"cloud_run_revision\"}[$${__interval}]))\n"
-                },
-                "plotType": "LINE"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "xPos": 24,
-        "width": 24,
-        "height": 16,
-        "widget": {
-          "title": "Request Latency P95 | ${service_name}",
-          "xyChart": {
-            "dataSets": [
-              {
-                "timeSeriesQuery": {
-                  "prometheusQuery": "histogram_quantile(0.95,sum by (response_code_class,le)(increase(run_googleapis_com:request_latencies_bucket{monitored_resource=\"cloud_run_revision\"}[$${__interval}])))"
-                },
-                "plotType": "LINE"
-              }
-            ]
-          }
-        }
-      },
-      {
-        "yPos": 16,
-        "width": 24,
-        "height": 16,
-        "widget": {
-          "title": "Requests | ${service_name}",
+          "title": "Load Balancer Requests | ${service_name}",
           "xyChart": {
             "dataSets": [
               {
@@ -66,12 +30,35 @@
         }
       },
       {
-        "xPos": 24,
-        "yPos": 16,
-        "width": 24,
+        "xPos": 16,
+        "width": 16,
         "height": 16,
         "widget": {
-          "title": "Backend Latency | ${service_name}",
+          "title": "Service Requests | ${service_name}",
+          "xyChart": {
+            "dataSets": [
+              {
+                "timeSeriesQuery": {
+                  "prometheusQuery": "sum by (response_code_class)(increase(run_googleapis_com:request_count{monitored_resource=\"cloud_run_revision\"}[$${__interval}]))\n"
+                },
+                "plotType": "STACKED_BAR"
+              }
+            ]
+          }
+        }
+      },
+      {
+        "xPos": 32,
+        "width": 16,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["server_error"]}"}}
+      },
+      {
+        "yPos": 16,
+        "width": 16,
+        "height": 16,
+        "widget": {
+          "title": "Service Latency | ${service_name}",
           "xyChart": {
             "dataSets": [
               {
@@ -88,9 +75,24 @@
                 "plotType": "HEATMAP",
                 "minAlignmentPeriod": "60s"
               }
-            ]
+            ],
+            "yAxis": {"scale": "LINEAR"}
           }
         }
+      },
+      {
+        "xPos": 16,
+        "yPos": 16,
+        "width": 16,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["service_latency"]}"}}
+      },
+      {
+        "xPos": 32,
+        "yPos": 16,
+        "width": 16,
+        "height": 16,
+        "widget": {"alertChart": {"name": "${alert_policy_name["uptime_check_failure"]}"}}
       },
       {
         "yPos": 32,
@@ -139,7 +141,7 @@
         "width": 24,
         "height": 16,
         "widget": {
-          "title": "Requests | ${service_name}",
+          "title": "Concurrent Requests | ${service_name}",
           "xyChart": {
             "dataSets": [
               {

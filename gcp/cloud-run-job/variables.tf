@@ -45,6 +45,11 @@ variable "env_secrets" {
   default = {}
 }
 
+variable "egress_subnetwork_id" {
+  type = string
+  default = null
+}
+
 variable "command" {
   type = list(string)
   default = null
