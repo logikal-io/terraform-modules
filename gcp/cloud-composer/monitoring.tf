@@ -191,7 +191,7 @@ resource "google_monitoring_alert_policy" "dag_load_time" {
   conditions {
     display_name = "high DAG load time"
     condition_threshold {
-      threshold_value = 5 * 1000 # ms
+      threshold_value = 10 * 1000 # ms
       duration = "${5 * 60}s"
       comparison = "COMPARISON_GT"
       aggregations {

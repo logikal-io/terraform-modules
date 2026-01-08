@@ -98,32 +98,6 @@
         "width": 16,
         "height": 16,
         "widget": {"alertChart": {"name": "${alert_policy_name["db_ram"]}"}}
-      },
-      {
-        "yPos": 112,
-        "width": 16,
-        "height": 16,
-        "widget": {
-          "title": "DAG Run Duration | ${environment_name}",
-          "xyChart": {
-            "dataSets": [
-              {
-                "timeSeriesQuery": {
-                  "timeSeriesFilter": {
-                    "filter": "metric.type=\"composer.googleapis.com/workflow/dag/run_duration\" resource.type=\"cloud_composer_workflow\" resource.label.environment_name=\"${environment_name}\"",
-                    "aggregation": {
-                      "alignmentPeriod": "60s",
-                      "perSeriesAligner": "ALIGN_MAX",
-                      "crossSeriesReducer": "REDUCE_MAX"
-                    }
-                  }
-                },
-                "plotType": "LINE",
-                "minAlignmentPeriod": "60s"
-              }
-            ]
-          }
-        }
       }
     ]
   }
