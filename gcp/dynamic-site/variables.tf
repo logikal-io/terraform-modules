@@ -107,6 +107,16 @@ variable "publisher_service_account_email" {
 }
 
 # Cloud Run job variables
+variable "job_server_cpu" {
+  type = number
+  default = null # defaults to var.server_cpu
+}
+
+variable "job_server_memory" {
+  type = string
+  default = null # defaults to var.server_memory
+}
+
 variable "job_command" {
   type = list(string)
   default = null # defaults to ["orb", var.name, "--command"]
