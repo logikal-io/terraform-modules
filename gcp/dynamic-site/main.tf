@@ -79,8 +79,8 @@ module "cloud_run_job" {
   project_id = var.project_id
   name = var.name_suffix != null ? "${var.name}-command-${var.name_suffix}" : "${var.name}-command"
   region = var.region
-  server_cpu = var.server_cpu
-  server_memory = var.server_memory
+  server_cpu = coalesce(var.job_server_cpu, var.server_cpu)
+  server_memory = coalesce(var.job_server_memory, var.server_memory)
   image = module.cloud_run_service.image
   env = var.env
   command = var.job_command != null ? var.job_command : ["orb", var.name, "--command"]
