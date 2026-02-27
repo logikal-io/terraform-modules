@@ -1,5 +1,5 @@
 locals {
-  log_id = "${local.website_id}-logs"
+  log_id = "${var.name}-logs"
 }
 
 resource "google_project_service" "logging" {
