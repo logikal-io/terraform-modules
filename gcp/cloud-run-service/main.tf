@@ -9,6 +9,12 @@ terraform {
 }
 
 # Artifact registry
+resource "google_project_service" "container_scanning" {
+  count = var.image == null ? 1 : 0
+
+  service = "containerscanning.googleapis.com"
+}
+
 resource "google_project_service" "artifact_registry" {
   count = var.image == null ? 1 : 0
 
