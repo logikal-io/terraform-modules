@@ -242,12 +242,16 @@ resource "google_compute_url_map" "this" {
   depends_on = [google_project_service.compute_engine]
 }
 
+locals {
+  domain_id = replace(var.domain, ".", "-")
+}
+
 resource "google_project_service" "certificate_manager" {
   service = "certificatemanager.googleapis.com"
 }
 
 resource "google_compute_managed_ssl_certificate" "this" {
-  name = replace(var.domain, ".", "-")
+  name = local.domain_id
 
   managed {
     domains = ["${var.domain}."]
@@ -263,7 +267,7 @@ resource "google_compute_managed_ssl_certificate" "this" {
 resource "google_compute_managed_ssl_certificate" "www" {
   count = var.www_redirect ? 1 : 0
 
-  name = "www-${replace(var.domain, ".", "-")}"
+  name = "www-${local.domain_id}"
 
   managed {
     domains = ["www.${var.domain}."]

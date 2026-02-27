@@ -10,12 +10,11 @@ terraform {
 
 locals {
   domain_id = replace(var.domain, ".", "-")
-  website_id = "website-${local.domain_id}"
 }
 
 # Bucket
 resource "google_storage_bucket" "this" {
-  name = local.website_id
+  name = "${var.name}-service-${local.domain_id}"
   location = var.bucket_location
   storage_class = "STANDARD"
 
@@ -39,14 +38,14 @@ resource "google_project_service" "compute_engine" {
 }
 
 resource "google_compute_security_policy" "cloud_armor_edge" {
-  name = "${local.website_id}-cloud-armor-edge"
+  name = "${var.name}-cloud-armor-edge"
   type = "CLOUD_ARMOR_EDGE"
 
   depends_on = [google_project_service.compute_engine]
 }
 
 resource "google_compute_backend_bucket" "this" {
-  name = "${local.website_id}-backend-bucket"
+  name = "${var.name}-backend-bucket"
   bucket_name = google_storage_bucket.this.name
   enable_cdn = true
   edge_security_policy = google_compute_security_policy.cloud_armor_edge.id
@@ -59,10 +58,10 @@ resource "google_compute_backend_bucket" "this" {
 
 # Load balancer routing
 resource "google_compute_url_map" "this" {
-  name = "${local.website_id}-service"
+  name = "${var.name}-service"
   default_service = google_compute_backend_bucket.this.id
 
-  dynamic "host_rule" {
+  dynamic host_rule {
     for_each = var.www_redirect ? [1] : []
 
     content {
@@ -71,7 +70,7 @@ resource "google_compute_url_map" "this" {
     }
   }
 
-  dynamic "path_matcher" {
+  dynamic path_matcher {
     for_each = var.www_redirect ? [1] : []
 
     content {
@@ -85,7 +84,7 @@ resource "google_compute_url_map" "this" {
     }
   }
 
-  dynamic "host_rule" {
+  dynamic host_rule {
     for_each = length(var.redirects) > 0 ? [1] : []
     content {
       hosts = [var.domain]
@@ -93,7 +92,7 @@ resource "google_compute_url_map" "this" {
     }
   }
 
-  dynamic "path_matcher" {
+  dynamic path_matcher {
     for_each = length(var.redirects) > 0 ? [1] : []
     content {
       default_service = google_compute_backend_bucket.this.id
@@ -116,6 +115,8 @@ resource "google_compute_url_map" "this" {
   lifecycle {
     create_before_destroy = true
   }
+
+  depends_on = [google_project_service.compute_engine]
 }
 
 resource "google_project_service" "certificate_manager" {
@@ -139,7 +140,7 @@ resource "google_compute_managed_ssl_certificate" "this" {
 resource "google_compute_managed_ssl_certificate" "www" {
   count = var.www_redirect ? 1 : 0
 
-  name = "www-${replace(var.domain, ".", "-")}"
+  name = "www-${local.domain_id}"
 
   managed {
     domains = ["www.${var.domain}."]
@@ -153,7 +154,7 @@ resource "google_compute_managed_ssl_certificate" "www" {
 }
 
 resource "google_compute_target_https_proxy" "this" {
-  name = "${local.website_id}-service"
+  name = "${var.name}-service"
   url_map = google_compute_url_map.this.id
   quic_override = "ENABLE"
   ssl_certificates = compact([
@@ -163,13 +164,13 @@ resource "google_compute_target_https_proxy" "this" {
 }
 
 resource "google_compute_global_address" "this" {
-  name = local.domain_id
+  name = "${var.name}-ip"
 
   depends_on = [google_project_service.compute_engine]
 }
 
 resource "google_compute_global_forwarding_rule" "service_https" {
-  name = "${local.website_id}-service"
+  name = "${var.name}-service-https"
   load_balancing_scheme = "EXTERNAL"
   target = google_compute_target_https_proxy.this.id
   ip_address = google_compute_global_address.this.address
@@ -178,7 +179,7 @@ resource "google_compute_global_forwarding_rule" "service_https" {
 
 # HTTP to HTTPS redirection
 resource "google_compute_url_map" "http_to_https" {
-  name = "${local.website_id}-http-to-https"
+  name = "${var.name}-http-to-https"
 
   default_url_redirect {
     https_redirect = true
@@ -186,7 +187,7 @@ resource "google_compute_url_map" "http_to_https" {
     redirect_response_code = "PERMANENT_REDIRECT"
   }
 
-  dynamic "host_rule" {
+  dynamic host_rule {
     for_each = length(var.redirects) > 0 ? ["host_rule"] : []
     content {
       hosts = [var.domain]
@@ -194,7 +195,7 @@ resource "google_compute_url_map" "http_to_https" {
     }
   }
 
-  dynamic "path_matcher" {
+  dynamic path_matcher {
     for_each = length(var.redirects) > 0 ? ["host_rule"] : []
     content {
       name = "redirects"
@@ -225,12 +226,12 @@ resource "google_compute_url_map" "http_to_https" {
 }
 
 resource "google_compute_target_http_proxy" "http_to_https_proxy" {
-  name = "${local.website_id}-http-to-https-proxy"
+  name = "${var.name}-http-to-https-proxy"
   url_map = google_compute_url_map.http_to_https.id
 }
 
 resource "google_compute_global_forwarding_rule" "service_http" {
-  name = "${local.website_id}-service-http"
+  name = "${var.name}-service-http"
   load_balancing_scheme = "EXTERNAL"
   target = google_compute_target_http_proxy.http_to_https_proxy.id
   ip_address = google_compute_global_address.this.address

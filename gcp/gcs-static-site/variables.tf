@@ -2,6 +2,10 @@ variable "project_id" {
   type = string
 }
 
+variable "name" {
+  type = string
+}
+
 variable "domain_project_id" {
   type = string
   default = null # defaults to project_id
@@ -28,10 +32,6 @@ variable "www_redirect" {
   default = false
 }
 
-variable "publisher_service_account_email" {
-  type = string
-}
-
 variable "bucket_location" {
   type = string
   default = "EU"
@@ -46,6 +46,10 @@ variable "force_cache_all" {
   description = "Whether Google Cloud CDN should cache all successful responses unconditionally"
   type = bool
   default = false
+}
+
+variable "publisher_service_account_email" {
+  type = string
 }
 
 variable "redirects" {
