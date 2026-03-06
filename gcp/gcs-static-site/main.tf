@@ -164,7 +164,7 @@ resource "google_compute_target_https_proxy" "this" {
 }
 
 resource "google_compute_global_address" "this" {
-  name = "${var.name}-ip"
+  name = "${var.name}-service"
 
   depends_on = [google_project_service.compute_engine]
 }
