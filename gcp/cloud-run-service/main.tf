@@ -200,7 +200,7 @@ resource "google_compute_backend_service" "this" {
   load_balancing_scheme = "EXTERNAL_MANAGED"
   timeout_sec = 30
 
-  security_policy = one(google_compute_security_policy.this[*].id)
+  security_policy = google_compute_security_policy.this.id
 
   backend {
     group = google_compute_region_network_endpoint_group.this.id

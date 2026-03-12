@@ -58,6 +58,34 @@ resource "google_monitoring_alert_policy" "db_cpu" {
   depends_on = [google_project_service.monitoring]
 }
 
+resource "google_monitoring_alert_policy" "db_cpu_missing" {
+  display_name = "${local.monitoring_name_prefix}-cpu-missing"
+  combiner = "OR"
+  conditions {
+    display_name = "missing CPU usage data"
+    condition_absent {
+      duration = "${5 * 60}s"
+      aggregations {
+        alignment_period = "60s"
+        per_series_aligner = "ALIGN_MAX"
+        cross_series_reducer = "REDUCE_MAX"
+      }
+      filter = join(" AND ", [
+        "metric.type = \"cloudsql.googleapis.com/database/cpu/utilization\"",
+        "resource.type = \"cloudsql_database\"",
+        "resource.label.database_id = \"${local.database_id}\"",
+      ])
+      trigger {
+        percent = 100
+      }
+    }
+  }
+  severity = var.alert_severity
+  notification_channels = var.alert_notification_channel_ids
+
+  depends_on = [google_project_service.monitoring]
+}
+
 resource "google_monitoring_alert_policy" "db_ram" {
   display_name = "${local.monitoring_name_prefix}-ram"
   combiner = "OR"
@@ -86,6 +114,34 @@ resource "google_monitoring_alert_policy" "db_ram" {
   depends_on = [google_project_service.monitoring]
 }
 
+resource "google_monitoring_alert_policy" "db_ram_missing" {
+  display_name = "${local.monitoring_name_prefix}-ram-missing"
+  combiner = "OR"
+  conditions {
+    display_name = "missing RAM usage data"
+    condition_absent {
+      duration = "${5 * 60}s"
+      aggregations {
+        alignment_period = "60s"
+        per_series_aligner = "ALIGN_MAX"
+        cross_series_reducer = "REDUCE_MAX"
+      }
+      filter = join(" AND ", [
+        "metric.type = \"cloudsql.googleapis.com/database/memory/utilization\"",
+        "resource.type = \"cloudsql_database\"",
+        "resource.labels.database_id = \"${local.database_id}\"",
+      ])
+      trigger {
+        percent = 100
+      }
+    }
+  }
+  severity = var.alert_severity
+  notification_channels = var.alert_notification_channel_ids
+
+  depends_on = [google_project_service.monitoring]
+}
+
 resource "google_monitoring_alert_policy" "db_disk" {
   display_name = "${local.monitoring_name_prefix}-disk"
   combiner = "OR"
@@ -95,9 +151,6 @@ resource "google_monitoring_alert_policy" "db_disk" {
       threshold_value = var.alert_disk_threshold
       duration = "${5 * 60}s"
       comparison = "COMPARISON_GT"
-      trigger {
-        count = 3
-      }
       aggregations {
         alignment_period = "60s"
         per_series_aligner = "ALIGN_MAX"
@@ -109,6 +162,34 @@ resource "google_monitoring_alert_policy" "db_disk" {
         "resource.labels.database_id = \"${local.database_id}\"",
       ])
       evaluation_missing_data = "EVALUATION_MISSING_DATA_NO_OP"
+    }
+  }
+  severity = var.alert_severity
+  notification_channels = var.alert_notification_channel_ids
+
+  depends_on = [google_project_service.monitoring]
+}
+
+resource "google_monitoring_alert_policy" "db_disk_missing" {
+  display_name = "${local.monitoring_name_prefix}-disk-missing"
+  combiner = "OR"
+  conditions {
+    display_name = "missing disk usage data"
+    condition_absent {
+      duration = "${5 * 60}s"
+      aggregations {
+        alignment_period = "60s"
+        per_series_aligner = "ALIGN_MAX"
+        cross_series_reducer = "REDUCE_MAX"
+      }
+      filter = join(" AND ", [
+        "metric.type = \"cloudsql.googleapis.com/database/disk/utilization\"",
+        "resource.type = \"cloudsql_database\"",
+        "resource.labels.database_id = \"${local.database_id}\"",
+      ])
+      trigger {
+        percent = 100
+      }
     }
   }
   severity = var.alert_severity
