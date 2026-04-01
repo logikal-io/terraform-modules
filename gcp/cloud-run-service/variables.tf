@@ -182,3 +182,8 @@ variable "publisher_service_account_email" {
   type = string
   default = null
 }
+
+variable "ip_address_name" {
+  type = string
+  default = null
+}

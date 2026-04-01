@@ -296,7 +296,7 @@ resource "google_compute_target_https_proxy" "this" {
 }
 
 resource "google_compute_global_address" "this" {
-  name = "${var.name}-service"
+  name = coalesce(var.ip_address_name, "${var.name}-service")
   address_type = "EXTERNAL"
   ip_version = "IPV4"
 
