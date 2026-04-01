@@ -1,9 +1,13 @@
+output "project_id" {
+  value = var.project_id
+}
+
 output "name" {
-  value = google_sql_database_instance.this.name
+  value = local.database_instance_name
 }
 
 output "connection_name" {
-  value = google_sql_database_instance.this.connection_name
+  value = nonsensitive(local.database_instance.connection_name)
 }
 
 output "database_name" {

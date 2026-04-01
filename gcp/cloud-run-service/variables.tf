@@ -166,6 +166,7 @@ variable "allow_uptime_check_source_ips" {
 
 variable "cloud_sql_instances" {
   type = list(object({
+    project_id = string
     name = string
     connection_name = string
   }))

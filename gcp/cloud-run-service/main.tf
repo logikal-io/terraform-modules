@@ -55,6 +55,13 @@ data "google_artifact_registry_docker_image" "this" {
   image_name = var.image_version != null ? "${var.name}:${var.image_version}" : var.name
 }
 
+locals {
+  image = (
+    var.image != null ? var.image :
+    one(data.google_artifact_registry_docker_image.this[*]).self_link
+  )
+}
+
 # Cloud Run service
 resource "google_project_service" "cloud_run" {
   service = "run.googleapis.com"
@@ -81,10 +88,7 @@ resource "google_cloud_run_v2_service" "this" {
 
     service_account = google_service_account.this.email
     containers {
-      image = (
-        var.image != null ? var.image :
-        one(data.google_artifact_registry_docker_image.this[*]).self_link
-      )
+      image = local.image
       ports {
         container_port = var.container_port
       }

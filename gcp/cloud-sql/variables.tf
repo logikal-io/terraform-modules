@@ -6,20 +6,30 @@ variable "name" {
   type = string
 }
 
+variable "instance_name" {
+  type = string
+  default = null
+  description = "The name of an existing database instance to re-use"
+}
+
 variable "database_version" {
   type = string
+  default = null # must be provided when instance_name is null
 }
 
 variable "tier" {
   type = string
+  default = null # must be provided when instance_name is null
 }
 
 variable "availability_type" {
   type = string
+  default = null # must be provided when instance_name is null
 }
 
 variable "disk_size_gb" {
   type = number
+  default = null # must be provided when instance_name is null
 }
 
 variable "alert_notification_channel_ids" {
@@ -73,4 +83,9 @@ variable "maintenance_window_hour" {
 variable "users" {
   type = list(string)
   default = []
+}
+
+variable "deletion_protection_enabled" {
+  type = bool
+  default = true
 }

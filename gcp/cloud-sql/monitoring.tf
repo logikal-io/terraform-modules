@@ -3,25 +3,29 @@
 
 # Dashboard
 resource "google_project_service" "monitoring" {
+  count = var.instance_name == null ? 1 : 0
+
   service = "monitoring.googleapis.com"
 }
 
 locals {
-  monitoring_name_prefix = "${google_sql_database_instance.this.name}-db"
-  database_id = "${var.project_id}:${google_sql_database_instance.this.name}"
+  monitoring_name_prefix = "${local.database_instance_name}-db"
+  database_id = "${var.project_id}:${local.database_instance_name}"
 }
 
 resource "google_monitoring_dashboard" "this" {
+  count = var.instance_name == null ? 1 : 0
+
   dashboard_json = templatefile(
     "${path.module}/dashboard.json",
     {
       "name": local.monitoring_name_prefix,
-      "database_instance": google_sql_database_instance.this.name,
+      "database_instance": local.database_instance_name,
       "database_id": local.database_id,
       "alert_policy_name": {
-        "db_cpu": google_monitoring_alert_policy.db_cpu.name,
-        "db_ram": google_monitoring_alert_policy.db_ram.name,
-        "db_disk": google_monitoring_alert_policy.db_disk.name,
+        "db_cpu": one(google_monitoring_alert_policy.db_cpu[*]).name,
+        "db_ram": one(google_monitoring_alert_policy.db_ram[*]).name,
+        "db_disk": one(google_monitoring_alert_policy.db_disk[*]).name,
       },
     },
   )
@@ -31,6 +35,8 @@ resource "google_monitoring_dashboard" "this" {
 
 # Alerts
 resource "google_monitoring_alert_policy" "db_cpu" {
+  count = var.instance_name == null ? 1 : 0
+
   display_name = "${local.monitoring_name_prefix}-cpu"
   combiner = "OR"
   conditions {
@@ -59,6 +65,8 @@ resource "google_monitoring_alert_policy" "db_cpu" {
 }
 
 resource "google_monitoring_alert_policy" "db_cpu_missing" {
+  count = var.instance_name == null ? 1 : 0
+
   display_name = "${local.monitoring_name_prefix}-cpu-missing"
   combiner = "OR"
   conditions {
@@ -87,6 +95,8 @@ resource "google_monitoring_alert_policy" "db_cpu_missing" {
 }
 
 resource "google_monitoring_alert_policy" "db_ram" {
+  count = var.instance_name == null ? 1 : 0
+
   display_name = "${local.monitoring_name_prefix}-ram"
   combiner = "OR"
   conditions {
@@ -115,6 +125,8 @@ resource "google_monitoring_alert_policy" "db_ram" {
 }
 
 resource "google_monitoring_alert_policy" "db_ram_missing" {
+  count = var.instance_name == null ? 1 : 0
+
   display_name = "${local.monitoring_name_prefix}-ram-missing"
   combiner = "OR"
   conditions {
@@ -143,6 +155,8 @@ resource "google_monitoring_alert_policy" "db_ram_missing" {
 }
 
 resource "google_monitoring_alert_policy" "db_disk" {
+  count = var.instance_name == null ? 1 : 0
+
   display_name = "${local.monitoring_name_prefix}-disk"
   combiner = "OR"
   conditions {
@@ -171,6 +185,8 @@ resource "google_monitoring_alert_policy" "db_disk" {
 }
 
 resource "google_monitoring_alert_policy" "db_disk_missing" {
+  count = var.instance_name == null ? 1 : 0
+
   display_name = "${local.monitoring_name_prefix}-disk-missing"
   combiner = "OR"
   conditions {

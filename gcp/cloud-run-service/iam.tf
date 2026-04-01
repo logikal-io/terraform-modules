@@ -59,18 +59,20 @@ resource "google_secret_manager_secret_iam_member" "secret_access_for_service_us
 # Database access
 # See https://cloud.google.com/sql/docs/mysql/iam-conditions (under section "specific instances")
 resource "google_project_iam_member" "cloud_sql_access_for_service_account" {
-  for_each = toset([for instance in var.cloud_sql_instances : instance.name])
+  for_each = toset([
+    for instance in var.cloud_sql_instances : "${instance.project_id}:${instance.name}"
+  ])
 
-  project = var.project_id
+  project = split(":", each.key)[0]
   role = "roles/cloudsql.client"
   member = "serviceAccount:${google_service_account.this.email}"
   condition {
-    title = "instance-${each.key}"
+    title = "instance-${split(":", each.key)[1]}"
     expression = join(" && ", [
       "resource.type == 'sqladmin.googleapis.com/Instance'",
       "resource.name == '${join("/", [
-        "projects", var.project_id,
-        "instances", each.key,
+        "projects", split(":", each.key)[0],
+        "instances", split(":", each.key)[1],
       ])}'",
     ])
   }
