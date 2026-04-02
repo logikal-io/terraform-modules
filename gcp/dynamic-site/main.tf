@@ -22,7 +22,8 @@ locals {
 module "cloud_sql" {
   source = "../cloud-sql"
 
-  project_id = var.project_id
+  project_id = coalesce(var.database_instance_project_id, var.project_id)
+  instance_name = var.database_instance_name
   name = var.name_suffix != null ? "${var.name}-${var.name_suffix}" : var.name
   database_version = var.database_version
   tier = var.database_tier

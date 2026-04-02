@@ -13,10 +13,19 @@ terraform {
 }
 
 resource "google_project_service" "cloud_sql_admin" {
-  service = "sqladmin.googleapis.com"  # needed for cloud-sql-proxy connections
+  service = "sqladmin.googleapis.com"  # needed for cloud-sql-proxy and client connections
+}
+
+data "google_sql_database_instance" "this" {
+  count = var.instance_name != null ? 1 : 0
+
+  name = var.instance_name
+  project = var.project_id
 }
 
 resource "google_sql_database_instance" "this" {
+  count = var.instance_name == null ? 1 : 0
+
   name = var.name
   database_version = var.database_version
 
@@ -25,7 +34,7 @@ resource "google_sql_database_instance" "this" {
     edition = "ENTERPRISE"
     activation_policy = "ALWAYS"
     availability_type = var.availability_type
-    deletion_protection_enabled = true
+    deletion_protection_enabled = var.deletion_protection_enabled
 
     disk_autoresize = false
     disk_size = var.disk_size_gb
@@ -67,9 +76,18 @@ resource "google_sql_database_instance" "this" {
   }
 }
 
+locals {
+  database_instance = coalesce(
+    one(data.google_sql_database_instance.this[*]),
+    one(google_sql_database_instance.this[*]),
+  )
+  database_instance_name = nonsensitive(local.database_instance.name)
+}
+
 resource "google_sql_database" "this" {
   name = var.name
-  instance = google_sql_database_instance.this.name
+  instance = local.database_instance_name
+  project = var.project_id
 }
 
 resource "random_password" "user" {
@@ -81,7 +99,8 @@ resource "random_password" "user" {
 resource "google_sql_user" "user" {
   for_each = toset(var.users)
 
-  instance = google_sql_database_instance.this.name
+  instance = local.database_instance_name
   name = each.value
   password = random_password.user[each.value].result
+  project = var.project_id
 }

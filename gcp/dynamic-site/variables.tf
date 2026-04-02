@@ -128,20 +128,35 @@ variable "job_egress_subnetwork_id" {
 }
 
 # Database variables
+variable "database_instance_name" {
+  type = string
+  default = null
+  description = "The name of an existing database instance to re-use"
+}
+
+variable "database_instance_project_id" {
+  type = string
+  default = null
+}
+
 variable "database_version" {
   type = string
+  default = null # must be provided when database_instance_name is null
 }
 
 variable "database_tier" {
   type = string
+  default = null # must be provided when database_instance_name is null
 }
 
 variable "database_availability_type" {
   type = string
+  default = null # must be provided when database_instance_name is null
 }
 
 variable "database_disk_size_gb" {
   type = number
+  default = null # must be provided when database_instance_name is null
 }
 
 variable "database_alert_cpu_threshold" {

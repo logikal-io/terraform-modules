@@ -166,6 +166,7 @@ variable "allow_uptime_check_source_ips" {
 
 variable "cloud_sql_instances" {
   type = list(object({
+    project_id = string
     name = string
     connection_name = string
   }))
@@ -178,6 +179,11 @@ variable "secret_ids" {
 }
 
 variable "publisher_service_account_email" {
+  type = string
+  default = null
+}
+
+variable "ip_address_name" {
   type = string
   default = null
 }
