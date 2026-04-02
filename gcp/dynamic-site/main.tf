@@ -72,6 +72,7 @@ module "cloud_run_service" {
       google_secret_manager_secret.secret["${var.name}-database-access"].secret_id,
   ], var.secret_ids)
   publisher_service_account_email = var.publisher_service_account_email
+  ip_address_name = var.ip_address_name
 }
 
 module "cloud_run_job" {
