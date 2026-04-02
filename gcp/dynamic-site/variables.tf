@@ -106,6 +106,11 @@ variable "publisher_service_account_email" {
   default = null
 }
 
+variable "ip_address_name" {
+  type = string
+  default = null
+}
+
 # Cloud Run job variables
 variable "job_server_cpu" {
   type = number
