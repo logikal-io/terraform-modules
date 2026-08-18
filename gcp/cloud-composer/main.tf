@@ -108,6 +108,7 @@ resource "google_composer_environment" "this" {
     }
 
     environment_size = var.environment_size
+    resilience_mode = var.resilience_mode
 
     maintenance_window {
       start_time = var.maintenance_window_start_time
