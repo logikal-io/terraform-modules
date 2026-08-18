@@ -3,7 +3,7 @@ terraform {
   required_providers {
     google = {
       source = "hashicorp/google"
-      version = "~> 7.34"
+      version = "~> 7.45"
     }
   }
 }
@@ -215,6 +215,33 @@ resource "google_compute_backend_service" "this" {
 resource "google_compute_url_map" "this" {
   name = "${var.name}-service"
   default_service = google_compute_backend_service.this.id
+
+  dynamic host_rule {
+    for_each = length(var.url_map_path_rules) > 0 ? [1] : []
+
+    content {
+      hosts = [var.domain]
+      path_matcher = "main"
+    }
+  }
+
+  dynamic path_matcher {
+    for_each = length(var.url_map_path_rules) > 0 ? [1] : []
+
+    content {
+      name = "main"
+      default_service = google_compute_backend_service.this.id
+
+      dynamic path_rule {
+        for_each = var.url_map_path_rules
+
+        content {
+          paths = path_rule.value.paths
+          service = path_rule.value.service
+        }
+      }
+    }
+  }
 
   dynamic host_rule {
     for_each = var.www_redirect ? [1] : []

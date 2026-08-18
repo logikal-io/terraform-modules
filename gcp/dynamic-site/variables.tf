@@ -96,6 +96,14 @@ variable "allow_uptime_check_source_ips" {
   default = true
 }
 
+variable "url_map_path_rules" {
+  type = list(object({
+    paths = list(string)
+    service = string
+  }))
+  default = []
+}
+
 variable "secret_ids" {
   type = list(string)
   default = []

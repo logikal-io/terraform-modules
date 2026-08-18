@@ -3,11 +3,11 @@ terraform {
   required_providers {
     pagerduty = {
       source = "pagerduty/pagerduty"
-      version = "~> 3.32"
+      version = "~> 3.35"
     }
     google = {
       source = "hashicorp/google"
-      version = "~> 7.34"
+      version = "~> 7.45"
     }
   }
 }

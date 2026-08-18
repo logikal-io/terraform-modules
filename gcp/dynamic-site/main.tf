@@ -7,7 +7,7 @@ terraform {
     }
     google = {
       source = "hashicorp/google"
-      version = "~> 7.34"
+      version = "~> 7.45"
     }
   }
 }
@@ -67,6 +67,7 @@ module "cloud_run_service" {
   allowed_source_ip_ranges = var.allowed_source_ip_ranges
   allow_uptime_check_source_ips = var.allow_uptime_check_source_ips
   cloud_sql_instances = [module.cloud_sql]
+  url_map_path_rules = var.url_map_path_rules
   secret_ids = concat([
       google_secret_manager_secret.secret["${var.name}-secret-key"].secret_id,
       google_secret_manager_secret.secret["${var.name}-database-access"].secret_id,

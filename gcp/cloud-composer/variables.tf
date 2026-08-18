@@ -71,6 +71,12 @@ variable "environment_size" {
   default = "ENVIRONMENT_SIZE_SMALL"
 }
 
+variable "resilience_mode" {
+  type = string
+  default = "STANDARD_RESILIENCE"
+  description = "Environment resilience level, either `STANDARD_RESILIENCE` or `HIGH_RESILIENCE`"
+}
+
 # We are using the smallest reasonable values
 # Note that the worker resources had to be increased because the limit values seem to be too low
 # See https://cloud.google.com/composer/docs/composer-3/scale-environments#limits
