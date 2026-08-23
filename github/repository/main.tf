@@ -29,6 +29,8 @@ resource "github_repository" "this" {
 }
 
 resource "github_repository_vulnerability_alerts" "this" {
+  count = var.archived ? 0 : 1
+
   repository = github_repository.this.name
   enabled = coalesce(var.vulnerability_alerts, !var.archived)
 }
