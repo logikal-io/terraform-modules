@@ -63,23 +63,19 @@ resource "google_compute_security_policy" "this" {
     }
   }
 
-  # Path rules
+  # Request expression rules
   dynamic "rule" {
-    for_each = var.allowed_source_ip_ranges != null ? var.allowed_paths : []
+    for_each = var.allowed_source_ip_ranges != null ? var.allowed_request_expressions : []
 
     content {
       action = "allow"
       priority = 4000 + rule.key
       match {
         expr {
-          expression = join(" && ", [
-            "request.path == '${rule.value}'",
-            "has(request.headers['authorization'])",
-            "request.headers['authorization'].startsWith('Bearer ')",
-          ])
+          expression = rule.value
         }
       }
-      description = "Allow authorized requests to specific paths"
+      description = "Allow specific requests"
     }
   }
 

@@ -164,7 +164,7 @@ variable "allow_uptime_check_source_ips" {
   default = true
 }
 
-variable "allowed_paths" {
+variable "allowed_request_expressions" {
   type = list(string)
   default = []
 }
