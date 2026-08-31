@@ -72,10 +72,14 @@ resource "google_compute_security_policy" "this" {
       priority = 4000 + rule.key
       match {
         expr {
-          expression = "request.path == '${rule.value}'"
+          expression = join(" && ", [
+            "request.path == '${rule.value}'",
+            "has(request.headers['authorization'])",
+            "request.headers['authorization'].startsWith('Bearer ')",
+          ])
         }
       }
-      description = "Allow specific request paths"
+      description = "Allow authorized requests to specific paths"
     }
   }
 
