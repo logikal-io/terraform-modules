@@ -63,6 +63,22 @@ resource "google_compute_security_policy" "this" {
     }
   }
 
+  # Path rules
+  dynamic "rule" {
+    for_each = var.allowed_source_ip_ranges != null ? var.allowed_paths : []
+
+    content {
+      action = "allow"
+      priority = 4000 + rule.key
+      match {
+        expr {
+          expression = "request.path == '${rule.value}'"
+        }
+      }
+      description = "Allow specific request paths"
+    }
+  }
+
   # Default rule
   rule {
     action = var.allowed_source_ip_ranges != null ? "deny(403)" : "allow"
