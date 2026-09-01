@@ -66,7 +66,7 @@ resource "google_cloud_run_v2_job" "this" {
     task_count = 1
     template {
       execution_environment = "EXECUTION_ENVIRONMENT_GEN2"
-      timeout = "${60 * 60}s"  # 60 minutes
+      timeout = var.timeout
       max_retries = 0
 
       service_account = local.service_account_email

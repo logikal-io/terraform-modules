@@ -20,6 +20,11 @@ variable "server_memory" {
   default = "512Mi"
 }
 
+variable "timeout" {
+  type = string
+  default = "3600s"
+}
+
 variable "image" {
   type = string
   default = null
