@@ -206,6 +206,15 @@ resource "google_compute_backend_service" "this" {
 
   security_policy = google_compute_security_policy.this.id
 
+  dynamic "log_config" {
+    for_each = var.load_balancer_logging_enabled ? [1] : []
+
+    content {
+      enable = true
+      sample_rate = 1.0
+    }
+  }
+
   backend {
     group = google_compute_region_network_endpoint_group.this.id
   }

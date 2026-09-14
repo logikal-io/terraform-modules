@@ -67,6 +67,7 @@ module "cloud_run_service" {
   allowed_source_ip_ranges = var.allowed_source_ip_ranges
   allow_uptime_check_source_ips = var.allow_uptime_check_source_ips
   allowed_request_expressions = var.allowed_request_expressions
+  load_balancer_logging_enabled = var.load_balancer_logging_enabled
   cloud_sql_instances = [module.cloud_sql]
   url_map_path_rules = var.url_map_path_rules
   secret_ids = concat([
