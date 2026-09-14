@@ -200,3 +200,8 @@ variable "ip_address_name" {
   type = string
   default = null
 }
+
+variable "load_balancer_logging_enabled" {
+  type = bool
+  default = false
+}

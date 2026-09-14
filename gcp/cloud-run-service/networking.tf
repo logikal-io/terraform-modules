@@ -10,6 +10,14 @@ locals {
 resource "google_compute_security_policy" "this" {
   name = "${var.name}-service"
 
+  dynamic "advanced_options_config" {
+    for_each = var.load_balancer_logging_enabled ? [1] : []
+
+    content {
+      log_level = "VERBOSE"
+    }
+  }
+
   # Only allow hostname
   rule {
     action = "deny(403)"
