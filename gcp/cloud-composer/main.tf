@@ -28,21 +28,29 @@ resource "google_composer_environment" "this" {
   name = var.name
   region = var.region
 
+  # DAG storage
   storage_config {
     bucket = module.gcs_airflow_bucket.name
   }
 
   config {
+    # Configuration
     software_config {
       image_version = var.image_version
       pypi_packages = var.pypi_packages
+      env_variables = var.env_variables
 
       airflow_config_overrides = merge({
+        api-default_wrap = true
+        api-enable_swagger_ui = false
+        api-instance_name = var.instance_name
+        api-theme = jsonencode(var.ui_theme)
         core-default_task_execution_timeout = 60 * 60 # seconds -> 1 hour
-        core-default_task_retries = 0
-        core-dag_file_processor_timeout = 30
+        core-load_examples = false
         core-max_active_runs_per_dag = var.max_active_runs_per_dag
         core-parallelism = var.max_task_instances_per_scheduler
+        dag_processor-dag_file_processor_timeout = 30 # seconds
+        dag_processor-refresh_interval = 60 # seconds
         secrets-backend = (
           "airflow.providers.google.cloud.secrets.secret_manager.CloudSecretManagerBackend"
         )
@@ -50,23 +58,22 @@ resource "google_composer_environment" "this" {
           connections_prefix = local.connections_prefix
         })
         secrets-backends_order = "metastore,environment_variable,custom"
-        scheduler-dag_dir_list_interval = 60 # seconds
-        scheduler-catchup_by_default = false
-        scheduler-create_cron_data_intervals = false
-        scheduler-parsing_cleanup_interval = 60 # seconds
-        webserver-default_dag_run_display_number = 50
-        webserver-default_wrap = true
-        webserver-enable_swagger_ui = false
-        webserver-instance_name_has_markup = true
-        webserver-instance_name = var.webserver_instance_name
-        webserver-navbar_color = var.webserver_navbar_color
-        webserver-navbar_hover_color = var.webserver_navbar_hover_color
-        webserver-navbar_logo_text_color = var.webserver_navbar_logo_text_color
-        webserver-navbar_text_color = var.webserver_navbar_text_color
-        webserver-navbar_text_hover_color = var.webserver_navbar_text_hover_color
       }, var.config_overrides)
+    }
 
-      env_variables = var.env_variables
+    maintenance_window {
+      start_time = var.maintenance_window_start_time
+      end_time = var.maintenance_window_end_time
+      recurrence = var.maintenance_window_recurrence
+    }
+
+    # Networking
+    enable_private_environment = false
+
+    node_config {
+      service_account = google_service_account.airflow_service.email
+      network = var.network
+      subnetwork = var.subnetwork
     }
 
     web_server_network_access_control {
@@ -79,7 +86,9 @@ resource "google_composer_environment" "this" {
       }
     }
 
-    enable_private_environment = false
+    # Resources
+    environment_size = var.environment_size
+    resilience_mode = var.resilience_mode
 
     workloads_config {
       scheduler {
@@ -93,6 +102,12 @@ resource "google_composer_environment" "this" {
         memory_gb = var.triggerer_memory_gb
         count = var.triggerer_count
       }
+      dag_processor {
+        cpu = var.dag_processor_cpu
+        memory_gb =  var.dag_processor_memory_gb
+        storage_gb = var.dag_processor_storage_gb
+        count = var.dag_processor_count
+      }
       web_server {
         cpu = var.webserver_cpu
         memory_gb = var.webserver_memory_gb
@@ -105,21 +120,6 @@ resource "google_composer_environment" "this" {
         min_count = var.workers_min
         max_count = var.workers_max
       }
-    }
-
-    environment_size = var.environment_size
-    resilience_mode = var.resilience_mode
-
-    maintenance_window {
-      start_time = var.maintenance_window_start_time
-      end_time = var.maintenance_window_end_time
-      recurrence = var.maintenance_window_recurrence
-    }
-
-    node_config {
-      service_account = google_service_account.airflow_service.email
-      network = var.network
-      subnetwork = var.subnetwork
     }
   }
 
