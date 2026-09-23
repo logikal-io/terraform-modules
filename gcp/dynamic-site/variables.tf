@@ -226,3 +226,8 @@ variable "database_service_users" {
   type = list(string)
   default = []
 }
+
+variable "load_balancer_logging_enabled" {
+  type = bool
+  default = false
+}
