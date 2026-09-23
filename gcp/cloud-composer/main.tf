@@ -46,7 +46,6 @@ resource "google_composer_environment" "this" {
         api-instance_name = var.instance_name
         api-theme = jsonencode(var.ui_theme)
         core-default_task_execution_timeout = 60 * 60 # seconds -> 1 hour
-        core-load_examples = false
         core-max_active_runs_per_dag = var.max_active_runs_per_dag
         core-parallelism = var.max_task_instances_per_scheduler
         dag_processor-dag_file_processor_timeout = 30 # seconds
