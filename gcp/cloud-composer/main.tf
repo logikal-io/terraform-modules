@@ -104,7 +104,7 @@ resource "google_composer_environment" "this" {
       }
       dag_processor {
         cpu = var.dag_processor_cpu
-        memory_gb =  var.dag_processor_memory_gb
+        memory_gb = var.dag_processor_memory_gb
         storage_gb = var.dag_processor_storage_gb
         count = var.dag_processor_count
       }
