@@ -12,9 +12,12 @@ locals {
     {
       # The jsonencode output has to be post-processed
       # (see https://github.com/hashicorp/terraform/issues/26110)
-      for user in concat(["service_${var.name}"], keys(local.database_users)) :
-      "${replace(replace(user, "/^service_/", ""), "_", "-")}-database-access" =>
-      replace(replace(replace(jsonencode({
+      for user in concat(
+        ["${local.service_user_prefix}_${local.service_user_name}"],
+        keys(local.database_users),
+      ) :
+      "${replace(replace(user, "/^${local.service_user_prefix}_/", ""), "_", "-")}-database-access"
+      => replace(replace(replace(jsonencode({
         hostname = "/cloudsql/${module.cloud_sql.connection_name}"
         port = 5432
         database = module.cloud_sql.database_name

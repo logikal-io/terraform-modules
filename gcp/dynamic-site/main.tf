@@ -13,9 +13,11 @@ terraform {
 }
 
 locals {
+  service_user_prefix = "service"
+  service_user_name = replace(var.name, "-", "_")
   database_users = {
     for email in var.database_user_emails :
-    "user_${replace(replace(email, "/@.*/", ""), ".", "_")}" => email
+    "user_${replace(replace(replace(email, "/@.*/", ""), ".", "_"), "-", "_")}" => email
   }
 }
 
@@ -40,7 +42,10 @@ module "cloud_sql" {
   maintenance_window_day = var.database_maintenance_window_day
   maintenance_window_hour = var.database_maintenance_window_hour
   users = concat(
-    [for service in concat([var.name], var.database_service_users) : "service_${service}"],
+    [
+      for service in concat([local.service_user_name], var.database_service_users) :
+      "${local.service_user_prefix}_${replace(service, "-", "_")}"
+    ],
     keys(local.database_users),
   )
 }

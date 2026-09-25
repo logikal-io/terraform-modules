@@ -225,6 +225,16 @@ variable "database_user_emails" {
 variable "database_service_users" {
   type = list(string)
   default = []
+
+  validation {
+    condition = alltrue([
+      for user in var.database_service_users :
+      can(regex("^[a-z0-9][a-z0-9_]*$", user))
+    ])
+    error_message = (
+      "Only lowercase alphanumeric characters and underscores are allowed in service user names."
+    )
+  }
 }
 
 variable "load_balancer_logging_enabled" {
