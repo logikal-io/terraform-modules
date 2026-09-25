@@ -16,10 +16,12 @@ variable "image_version" {
 
 variable "network" {
   type = string
+  default = "default"
 }
 
 variable "subnetwork" {
   type = string
+  default = "default"
 }
 
 variable "pypi_packages" {
@@ -27,33 +29,14 @@ variable "pypi_packages" {
   default = {}
 }
 
-variable "webserver_instance_name" {
+variable "instance_name" {
   type = string
 }
 
-variable "webserver_navbar_color" {
-  type = string
-  default = "#ffffff"
-}
-
-variable "webserver_navbar_hover_color" {
-  type = string
-  default = "#eeeeee"
-}
-
-variable "webserver_navbar_logo_text_color" {
-  type = string
-  default = "#51504f"
-}
-
-variable "webserver_navbar_text_color" {
-  type = string
-  default = "#51504f"
-}
-
-variable "webserver_navbar_text_hover_color" {
-  type = string
-  default = "#51504f"
+# See https://airflow.apache.org/docs/apache-airflow/stable/howto/customize-ui.html
+variable "ui_theme" {
+  type = map(any)
+  default = {}
 }
 
 variable "config_overrides" {
@@ -127,7 +110,7 @@ variable "scheduler_count" {
 
 variable "triggerer_cpu" {
   type = number
-  default = 0.5
+  default = 1
 }
 
 variable "triggerer_memory_gb" {
@@ -136,6 +119,26 @@ variable "triggerer_memory_gb" {
 }
 
 variable "triggerer_count" {
+  type = number
+  default = 1
+}
+
+variable "dag_processor_cpu" {
+  type = number
+  default = 1
+}
+
+variable "dag_processor_memory_gb" {
+  type = number
+  default = 4
+}
+
+variable "dag_processor_storage_gb" {
+  type = number
+  default = 1
+}
+
+variable "dag_processor_count" {
   type = number
   default = 1
 }

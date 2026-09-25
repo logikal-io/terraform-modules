@@ -21,12 +21,13 @@ resource "google_monitoring_dashboard" "this" {
         # System health
         "environment_health": google_monitoring_alert_policy.environment_health.name,
         "web_server_health": google_monitoring_alert_policy.web_server_health.name,
+        "dag_processor_health": google_monitoring_alert_policy.dag_processor_health.name,
+        "dag_processor_stalls": google_monitoring_alert_policy.dag_processor_stalls.name,
         "scheduler_heartbeats": google_monitoring_alert_policy.scheduler_heartbeats.name,
         "db_health": google_monitoring_alert_policy.db_health.name,
         # Errors
         "dag_parse_errors": google_monitoring_alert_policy.dag_parse_errors.name,
         "dag_load_time": google_monitoring_alert_policy.dag_load_time.name,
-        "sla_callback_fails": google_monitoring_alert_policy.sla_callback_fails.name,
         "orphaned_tasks": google_monitoring_alert_policy.orphaned_tasks.name,
         # Resource issues
         "executor_open_slots": google_monitoring_alert_policy.executor_open_slots.name,
@@ -89,6 +90,62 @@ resource "google_monitoring_alert_policy" "web_server_health" {
       }
       filter = join(" AND ", [
         "metric.type = \"composer.googleapis.com/environment/web_server/health\"",
+        "resource.type = \"cloud_composer_environment\"",
+        "resource.label.environment_name = \"${local.environment_name}\"",
+      ])
+      evaluation_missing_data = "EVALUATION_MISSING_DATA_NO_OP"
+    }
+  }
+  severity = var.alert_severity
+  notification_channels = var.alert_notification_channel_ids
+
+  depends_on = [google_project_service.monitoring]
+}
+
+resource "google_monitoring_alert_policy" "dag_processor_health" {
+  display_name = "${local.monitoring_name_prefix}-dag-processor-health"
+  combiner = "OR"
+  conditions {
+    display_name = "no active DAG processors"
+    condition_threshold {
+      threshold_value = 1
+      duration = "${5 * 60}s"
+      comparison = "COMPARISON_LT"
+      aggregations {
+        alignment_period = "60s"
+        per_series_aligner = "ALIGN_MIN"
+        cross_series_reducer = "REDUCE_NONE"
+      }
+      filter = join(" AND ", [
+        "metric.type = \"composer.googleapis.com/environment/active_dag_processors\"",
+        "resource.type = \"cloud_composer_environment\"",
+        "resource.label.environment_name = \"${local.environment_name}\"",
+      ])
+      evaluation_missing_data = "EVALUATION_MISSING_DATA_NO_OP"
+    }
+  }
+  severity = var.alert_severity
+  notification_channels = var.alert_notification_channel_ids
+
+  depends_on = [google_project_service.monitoring]
+}
+
+resource "google_monitoring_alert_policy" "dag_processor_stalls" {
+  display_name = "${local.monitoring_name_prefix}-dag-processor-stalls"
+  combiner = "OR"
+  conditions {
+    display_name = "stalled DAG processor manager"
+    condition_threshold {
+      threshold_value = 0
+      duration = "${5 * 60}s"
+      comparison = "COMPARISON_GT"
+      aggregations {
+        alignment_period = "${5 * 60}s"
+        per_series_aligner = "ALIGN_DELTA"
+        cross_series_reducer = "REDUCE_NONE"
+      }
+      filter = join(" AND ", [
+        "metric.type = \"composer.googleapis.com/environment/dag_processing/manager_stall_count\"",
         "resource.type = \"cloud_composer_environment\"",
         "resource.label.environment_name = \"${local.environment_name}\"",
       ])
@@ -201,34 +258,6 @@ resource "google_monitoring_alert_policy" "dag_load_time" {
       }
       filter = join(" AND ", [
         "metric.type = \"composer.googleapis.com/environment/dag_processing/last_duration\"",
-        "resource.type = \"cloud_composer_environment\"",
-        "resource.label.environment_name = \"${local.environment_name}\"",
-      ])
-      evaluation_missing_data = "EVALUATION_MISSING_DATA_NO_OP"
-    }
-  }
-  severity = var.alert_severity
-  notification_channels = var.alert_notification_channel_ids
-
-  depends_on = [google_project_service.monitoring]
-}
-
-resource "google_monitoring_alert_policy" "sla_callback_fails" {
-  display_name = "${local.monitoring_name_prefix}-sla-callback-fails"
-  combiner = "OR"
-  conditions {
-    display_name = "SLA callback failure"
-    condition_threshold {
-      threshold_value = 0
-      duration = "${5 * 60}s"
-      comparison = "COMPARISON_GT"
-      aggregations {
-        alignment_period = "${5 * 60}s"
-        per_series_aligner = "ALIGN_DELTA"
-        cross_series_reducer = "REDUCE_NONE"
-      }
-      filter = join(" AND ", [
-        "metric.type = \"composer.googleapis.com/environment/sla_callback_notification_failure_count\"",
         "resource.type = \"cloud_composer_environment\"",
         "resource.label.environment_name = \"${local.environment_name}\"",
       ])
