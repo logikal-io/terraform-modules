@@ -1,5 +1,4 @@
 variable "organization" {
-  description = "The organization to use"
   type = string
 }
 
@@ -10,12 +9,10 @@ variable "billing_account_name" {
 }
 
 variable "name" {
-  description = "The name of the project"
   type = string
 }
 
 variable "namespace" {
-  description = "The namespace of the project"
   type = string
   default = null
 }
