@@ -227,7 +227,7 @@ resource "google_compute_url_map" "this" {
 
   header_action {
     request_headers_to_add {
-      header_name = "X-Client-IP"
+      header_name = "X-Client-IP" # used by libraries like django-allauth for rate limiting
       header_value = "{client_ip_address}"
       replace = true
     }
