@@ -225,6 +225,14 @@ resource "google_compute_url_map" "this" {
   name = "${var.name}-service"
   default_service = google_compute_backend_service.this.id
 
+  header_action {
+    request_headers_to_add {
+      header_name = "X-Client-IP"
+      header_value = "{client_ip_address}"
+      replace = true
+    }
+  }
+
   dynamic host_rule {
     for_each = length(var.url_map_path_rules) > 0 ? [1] : []
 
